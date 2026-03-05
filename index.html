@@ -2773,35 +2773,50 @@ function cleanupOldMessages(){
 
 // ═══ LIVE VIEWERS COUNTER ═══
 // Diapazons 102–998, atkarīgs no nedēļas dienas un stundas
+// Organiska uzvedība: trendi (tikai krīt / tikai aug / random), mainīgs ātrums
 function getLiveViewerRange(){
   const now=new Date(),h=now.getHours(),dow=now.getDay(); // 0=Sv,1=P,2=O,3=T,4=C,5=Pk,6=Se
-  // Piektdiena — nekad zem 502
-  if(dow===5)return[502,998];
-  // Sestdiena un Svētdiena
+  if(dow===5)return[502,998]; // Piektdiena — nekad zem 502
   if(dow===0||dow===6){
-    if(h>=3&&h<7)return[202,502]; // nakts 03–07: zemāk, bet ne zem 202
+    if(h>=3&&h<7)return[202,502]; // Brīvdienu nakts 03–07
     return[498,998];
   }
-  // Darba dienas (P–C)
-  if(h>=2&&h<8)return[102,198];   // nakts 02–08
-  if(h>=8&&h<17)return[198,498];  // diena 08–17
-  return[498,998];                // vakars+nakts 17–02
+  if(h>=2&&h<8)return[102,198];   // Darba dienu nakts 02–08
+  if(h>=8&&h<17)return[198,498];  // Diena 08–17
+  return[498,998];                // Vakars+nakts 17–02
 }
-let _lvBase=0;
+let _lvBase=0,_lvTrend=0,_lvTrendEnd=0;
+// Trends: -1=tikai krīt, 0=brīvi staigā, 1=tikai aug
+function _lvPickTrend(){
+  _lvTrend=Math.floor(Math.random()*3)-1;
+  // Trends ilgst 15–80 min
+  _lvTrendEnd=Date.now()+(15+Math.random()*65)*60000;
+}
+_lvPickTrend();
 function updateLiveCount(){
   const el=document.getElementById('tvLiveCount');if(!el)return;
-  const[min,max]=getLiveViewerRange();
-  // Ja bāze ārpus diapazona — pārlec uz jauno diapazonu
-  if(_lvBase<min||_lvBase>max)_lvBase=min+Math.floor(Math.random()*(max-min+1));
-  // Pakāpeniska novirze ±5–10% no diapazona (smooth drift)
-  const drift=Math.floor((Math.random()-0.5)*0.1*(max-min));
+  const[min,max]=getLiveViewerRange(),span=max-min;
+  // Ja bāze ārpus diapazona — ielec jaunajā
+  if(_lvBase<min||_lvBase>max)_lvBase=min+Math.floor(Math.random()*(span+1));
+  // Trends beidzies? Izvēlies jaunu
+  if(Date.now()>_lvTrendEnd)_lvPickTrend();
+  // Drift: 2–15% no diapazona (mainīgs spēks)
+  const power=0.02+Math.random()*0.13;
+  let drift=Math.round(power*span*(Math.random()-0.5)*2);
+  // Piemērot trendu
+  if(_lvTrend===1)drift=Math.abs(drift)||1;        // tikai aug
+  else if(_lvTrend===-1)drift=-(Math.abs(drift)||1); // tikai krīt
+  // Dažreiz palikt gandrīz uz vietas (20% iespēja — tikai ±1..2)
+  if(Math.random()<0.2)drift=Math.round((Math.random()-0.5)*4);
   _lvBase=Math.max(min,Math.min(max,_lvBase+drift));
-  // Maza svārstība ±8
-  const jitter=Math.floor(Math.random()*17)-8;
+  // Jitter: ±2 līdz ±15 (arī mainīgs)
+  const jr=2+Math.floor(Math.random()*14);
+  const jitter=Math.floor(Math.random()*(jr*2+1))-jr;
   el.textContent=Math.max(min,Math.min(max,_lvBase+jitter));
+  // Nākamais update: 3–22 sek (dažreiz ātri, dažreiz ilgi stāv)
+  setTimeout(updateLiveCount,3000+Math.floor(Math.random()*19000));
 }
 updateLiveCount();
-setInterval(updateLiveCount,7000+Math.random()*6000); // Ik 7-13 sek
 
 // ═══ REPORT + IETEIKUMU SISTĒMA ═══
 
