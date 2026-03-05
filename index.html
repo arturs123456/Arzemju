@@ -1806,8 +1806,8 @@ var CHAT_RATE={min:5000,perMin:6,perHour:60,ts:[]};
 var gameChatTimers=[];
 var gameChatLastKey=null;
 // Bad-words filtrs (jābūt augšā pirms sanitizeChat izsaukuma)
-var BAD_WORDS=[];
-try{var bw=localStorage.getItem('lom_badwords');if(bw)BAD_WORDS=JSON.parse(bw)}catch(e){}
+var BAD_WORDS=['fuck','shit','bitch','asshole','dick','pussy','cock','cunt','nigger','nigga','faggot','retard','whore','slut','bastard','piss','damn','stulb','dirsā','dirsa','dirsu','pimpis','pizdā','pizda','sūds','sūdi','sūdu','mauka','maukas','pidars','pidari','pidaras','krievi','krievu','huilo','huj','hui','nahuj','nahui','pediņ','pediņi','debīl','debils','idiots','lohs','pička'];
+try{var bw=localStorage.getItem('lom_badwords');if(bw)BAD_WORDS=BAD_WORDS.concat(JSON.parse(bw))}catch(e){}
 
 // ===== SUPABASE CMS =====
 const SUPABASE_URL = 'https://swamlervnowkokqmnwgl.supabase.co';
@@ -2941,15 +2941,25 @@ function filterBadWords(text){
   BAD_WORDS.forEach(w=>{if(w.length<2)return;const re=new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');c=c.replace(re,'\u2605'.repeat(Math.min(w.length,5)))});
   return c;
 }
-// Sanitizācija — tikai plain teksts, nekādu URL/email/kodu
+// Sanitizācija — tikai plain teksts, nekādu URL/email/kodu/injekciju
 function sanitizeChat(text){
   let s=text.replace(/<[^>]*>/g,''); // noņem HTML tagus
+  // Koda injekciju aizsardzība
+  s=s.replace(/javascript\s*:/gi,'');
+  s=s.replace(/data\s*:/gi,'');
+  s=s.replace(/vbscript\s*:/gi,'');
+  s=s.replace(/on\w+\s*=/gi,''); // onclick=, onerror=, onload= utt
+  s=s.replace(/(script|eval|alert|prompt|confirm|document|window|cookie|innerHTML|outerHTML|Function|constructor)\b/gi,'');
+  s=s.replace(/&[#\w]+;/g,''); // HTML entities &#x, &amp; utt
+  // URL un saites
   s=s.replace(/https?:\/\/\S+/gi,''); // noņem URL ar http
   s=s.replace(/www\.\S+/gi,''); // noņem www.
-  s=s.replace(/\S+\.(com|lv|org|net|io|eu|ru|de|uk|info|biz|me)\b/gi,''); // noņem domēnus
+  s=s.replace(/\S+\.(com|lv|org|net|io|eu|ru|de|uk|info|biz|me|tv|cc|co|xyz|top|site|online|app|dev|pro|live|store|shop|click|link|ly|gl|gd|ga|cf|tk|ml|gg|pw)\b/gi,''); // domēni
   s=s.replace(/\S+@\S+\.\S+/gi,''); // noņem email
-  s=s.replace(/(\+?\d[\d\s\-]{6,})/g,''); // noņem tālruņu numurus (7+ cipari)
-  s=s.replace(/[{}\[\]<>\\\/`]/g,''); // noņem koda simbolus
+  s=s.replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g,''); // IP adreses
+  s=s.replace(/(\+?\d[\d\s\-]{6,})/g,''); // tālruņu numuri (7+ cipari)
+  // Koda simboli un bīstamie burti
+  s=s.replace(/[{}\[\]<>\\\/`~|^;:=()]/g,''); // paplašināts koda simbolu filtrs
   s=s.replace(/\s+/g,' ').trim();
   return filterBadWords(s);
 }
