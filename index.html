@@ -290,6 +290,21 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .tv-screen.era-vcr .era-overlay-vcr-glitch{animation:vhsGlitchFlash 8s ease-in-out infinite}
 @keyframes vhsGlitchFlash{0%,92%,100%{opacity:0}93%{opacity:1}94%{opacity:0}96%{opacity:1}97%{opacity:0}}
 
+/* ═══ CHANNEL-BASED VISUAL STYLES ═══ */
+/* VECIE — VHS/VCR efekts pie 50% intensitātes */
+.tv-screen.ch-style-vhs .yt-slot{filter:saturate(0.7) contrast(1.05) brightness(0.92) sepia(0.03);transition:filter .8s ease}
+.tv-screen.ch-style-vhs .era-overlay-vcr{opacity:0.5;animation:vcrNoise .12s steps(1) infinite}
+.tv-screen.ch-style-vhs .era-overlay-vcr-chroma{opacity:0.5}
+.tv-screen.ch-style-vhs .era-overlay-vcr-band{opacity:0.5;animation:vcrBandDrift 6s linear infinite}
+.tv-screen.ch-style-vhs .era-overlay-vcr-grain{opacity:0.4;animation:vhsGrain .1s steps(1) infinite}
+.tv-screen.ch-style-vhs .era-overlay-vcr-glitch{animation:vhsGlitchFlash 8s ease-in-out infinite}
+/* JAUNIE — tīrs, bez efektiem */
+.tv-screen.ch-style-clean .yt-slot{filter:none;transition:filter .8s ease}
+/* Pārējie kanāli — LOMO efekts: viegla desaturācija + vinjete stūros */
+.tv-screen.ch-style-lomo .yt-slot{filter:saturate(0.9) contrast(1.05) brightness(0.96);transition:filter .8s ease}
+.tv-screen.ch-style-lomo .era-overlay-vintage{opacity:1;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)}
+
 /* SCREEN OVERLAYS */
 @keyframes logoPulse{0%,100%{text-shadow:0 0 8px var(--neon-purple),0 0 16px rgba(155,77,255,0.4)}50%{text-shadow:0 0 14px var(--neon-purple),0 0 28px rgba(155,77,255,0.7)}}
 .screen-logo{position:absolute;top:8px;left:8px;z-index:10;display:flex;align-items:center;gap:3px;background:none;border:none;padding:12px 22px 12px 16px;border-radius:0;
@@ -2436,12 +2451,13 @@ function updateNowPlaying(){
   const npt=document.getElementById('npText'),npc=document.getElementById('npCh');
   if(npt)npt.textContent=v.title;
   if(npc){npc.textContent='KAN '+(currentChannel+1)+' \u2014 '+ch.name;npc.style.color=ch.color}
-  applyEraEffect(v.decade||'modern');
 }
-function applyEraEffect(decade){
+function applyChannelStyle(chIdx){
   const s=document.getElementById('tvScreen');
-  s.classList.remove('era-vintage','era-vcr','era-modern');
-  s.classList.add(decade==='vintage'?'era-vintage':decade==='vcr'?'era-vcr':'era-modern');
+  s.classList.remove('era-vintage','era-vcr','era-modern','ch-style-vhs','ch-style-clean','ch-style-lomo');
+  if(chIdx===0) s.classList.add('ch-style-vhs');       // VECIE — VHS 50%
+  else if(chIdx===1) s.classList.add('ch-style-clean'); // JAUNIE — tīrs
+  else s.classList.add('ch-style-lomo');                // Pārējie — LOMO
 }
 function startProgressTracker(){
   if(progressInterval)clearInterval(progressInterval);
@@ -2502,6 +2518,7 @@ function switchChannel(ch){
   if(gameRunning){stopGame();const gb=document.getElementById('gamePanelBtn');if(gb)gb.classList.remove('active')}
   currentChannel=ch;
   lastMusicChannel=ch; // Atceries pēdējo mūzikas kanālu
+  applyChannelStyle(ch); // Kanāla vizuālais stils (VHS/clean/LOMO)
   document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));
   const newBtn=document.querySelector('#channelGrid .ch-btn[data-ch="'+ch+'"]');if(newBtn)newBtn.classList.add('active');
   const ov=document.getElementById('chOverlay');ov.textContent='KAN '+(ch+1);ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),1500);
