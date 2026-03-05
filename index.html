@@ -318,7 +318,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .logo-copy-3{transform:perspective(500px) translate3d(0,0,-45px);color:var(--neon-green);z-index:20}
 /* ═══ .tv — static neon glow (no continuous animation) ═══ */
 .logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:clamp(38px,6vw,58px);font-weight:400;color:#d9fdff;letter-spacing:2px;
-  position:absolute;bottom:15%;right:-1.2em;z-index:51;
+  position:absolute;top:0;right:-0.3em;z-index:51;
   display:inline-block;transform:rotate(-10deg);
   text-shadow:0 0 7px #00f0ff,0 0 15px #00f0ff,0 0 30px rgba(0,115,255,0.5)}
 /* ═══ JAFFA.tv logo — ekrāna augšā pa kreisi ═══ */
@@ -331,9 +331,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   animation:vhsRgbText 1.5s steps(9) infinite alternate}
 .ch-switch-overlay.show{opacity:1}
 /* LIVE badge + report button — labajā augšā */
-.tv-live-strip{position:absolute;top:6px;right:16px;z-index:15;display:flex;align-items:center;gap:8px;pointer-events:auto;
+.tv-live-strip{position:absolute;top:2px;right:16px;z-index:15;display:flex;align-items:center;gap:8px;pointer-events:auto;
   animation:vhsRgbText 2.5s steps(9) infinite alternate}
-.tv-live-badge{display:flex;align-items:center;gap:5px;font-family:'Press Start 2P',monospace;font-size:clamp(8px,1.1vw,13px);color:#fff;
+.tv-live-badge{display:flex;align-items:center;gap:5px;font-family:'Press Start 2P',monospace;font-size:clamp(7px,1vw,12px);color:#fff;
   background:none;padding:5px 10px;border-radius:4px;letter-spacing:1px;white-space:nowrap}
 .tv-live-dot{width:8px;height:8px;border-radius:50%;background:#e53935;display:inline-block;animation:livePulse 1.5s ease-in-out infinite;margin-right:2px;flex-shrink:0}
 @keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 4px #e53935}50%{opacity:.4;box-shadow:0 0 10px #ff5252,0 0 18px #e53935}}
@@ -1004,7 +1004,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 /* VHS OSD OVERLAY */
 .vhs-osd{position:absolute;inset:0;z-index:15;pointer-events:none;font-family:'Press Start 2P',monospace;font-size:clamp(8px,1.2vw,14px);color:#fff}
 .vhs-osd-ch{display:none}
-.vhs-osd-time{position:absolute;top:20px;left:34px;animation:vhsRgbText 1.5s steps(9) infinite alternate;text-shadow:0 0 6px rgba(255,255,255,0.4);font-size:clamp(7px,1vw,12px);opacity:0.85}
+.vhs-osd-time{position:absolute;top:14px;left:34px;animation:vhsRgbText 1.5s steps(9) infinite alternate;text-shadow:0 0 6px rgba(255,255,255,0.4);font-size:clamp(7px,1vw,12px);opacity:0.85}
 @keyframes vhsRgbText{
   0%,25%{text-shadow:-1px 1px 6px rgba(255,255,255,0.5),0 0 2px rgba(251,0,231,0.6),0 0 2px rgba(0,233,235,0.6)}
   45%,55%{text-shadow:-1px 1px 6px rgba(255,255,255,0.5),3px 0 1px rgba(251,0,231,0.7),-3px 0 1px rgba(0,233,235,0.7)}
@@ -1489,7 +1489,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
       </div>
     </div>
   </div>
-  <div class="start-age-gate">YOU MUST BE 30+ TO VIEW THIS CONTENT</div>
+  <div class="start-age-gate">FOR <span style="font-family:'Courier New',monospace;font-weight:900;letter-spacing:1px">30+</span> ONLY</div>
   <button class="start-btn" id="startBtn" onclick="launchTV()" aria-label="Sakt skatities">
     <div class="play-tri"></div>
     <span class="start-btn-label"></span>
@@ -1957,7 +1957,7 @@ async function switchLangGroup(newGroup){
 let channels=FALLBACK_CHANNELS;
 let cmsLoaded=false;
 
-let currentChannel=0,currentVideoIdx={},isPoweredOn=true,player=null,playerReady=false,smsMessages=[],progressInterval=null,isMuted=false,currentVolume=80,volumeBeforeMute=80;
+let currentChannel=Math.floor(Math.random()*6),currentVideoIdx={},isPoweredOn=true,player=null,playerReady=false,smsMessages=[],progressInterval=null,isMuted=false,currentVolume=80,volumeBeforeMute=80;
 let lastMusicChannel=null; // Pēdējais mūzikas kanāls (ne spēle) — lai ieslēdzot atgriežas
 // Dual-player crossfade sistēma
 let playerA=null,playerB=null,playerAReady=false,playerBReady=false;
@@ -2047,6 +2047,21 @@ function buildChannelGrid(){
 }
 buildChannelGrid();
 
+/* ═══ JAFFA logo — randomizēt krāsu secību katram apmeklējumam ═══ */
+(function(){
+  const colors=['var(--neon-purple)','var(--hot-pink)','var(--electric-blue)','var(--neon-green)'];
+  for(let i=colors.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[colors[i],colors[j]]=[colors[j],colors[i]]}
+  const glows={
+    'var(--neon-purple)':'0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)',
+    'var(--hot-pink)':'0 0 20px var(--hot-pink),0 0 40px rgba(255,0,110,0.4)',
+    'var(--electric-blue)':'0 0 20px var(--electric-blue),0 0 40px rgba(25,208,232,0.4)',
+    'var(--neon-green)':'0 0 20px var(--neon-green),0 0 40px rgba(53,237,126,0.4)'
+  };
+  const h1=document.querySelector('.logo-3d h1');
+  if(h1){h1.style.color=colors[0];h1.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,'+(glows[colors[0]]||'')}
+  const copies=document.querySelectorAll('.logo-3d .logo-copy');
+  copies.forEach((c,i)=>{if(colors[i+1])c.style.color=colors[i+1]});
+})();
 /* ═══ 3D perspective logo — rachsmith.com effect (GPU-composited) ═══ */
 (function(){
   const container=document.getElementById('logo3d');
@@ -2438,17 +2453,17 @@ function startProgressTracker(){
       // ═══ OVERLAY SECĪBA — 6 fāzes ar kolīziju aizsardzību ═══
       // TAGAD SKAN(30s) → MID(vidū) → TAGAD SKAN#2(90s pirms) → NĀKAMAIS(60s pirms) → TIKKO SKANĒJA(30s pirms) → crossfade(16s pirms)
       const totalDur=effectiveEnd-(v.trimStart||6);
-      // 1) TAGAD SKAN #1 — ~30s pēc klipa sākuma
-      if(c>=30&&!ovPhasesDone.now1){ovPhasesDone.now1=true;safeShowOverlay('now',v,10)}
+      // 1) TAGAD SKAN #1 — ~40s pēc klipa sākuma (+10s)
+      if(c>=40&&!ovPhasesDone.now1){ovPhasesDone.now1=true;safeShowOverlay('now',v,10)}
       // 2) MID-SONG PROGRAM — viduspunktā (tikai ja dziesma > 60s)
       const midPoint=effectiveEnd/2;
       if(totalDur>60&&c>=midPoint&&c<midPoint+15&&!ovPhasesDone.mid){ovPhasesDone.mid=true;safeMidOverlay(10)}
-      // 3) TAGAD SKAN #2 — ~90s pirms beigām (tikai ja dziesma > 120s)
-      if(totalDur>120&&remaining<=90&&remaining>75&&!ovPhasesDone.now2){ovPhasesDone.now2=true;safeShowOverlay('now',v,10)}
+      // 3) TAGAD SKAN #2 — ~80s pirms beigām (tikai ja dziesma > 120s, +10s)
+      if(totalDur>120&&remaining<=80&&remaining>65&&!ovPhasesDone.now2){ovPhasesDone.now2=true;safeShowOverlay('now',v,10)}
       // 4) NĀKAMAIS — ~60s pirms beigām + preload
       if(remaining<=60&&remaining>45&&!ovPhasesDone.next){ovPhasesDone.next=true;safeShowOverlay('next',getNextVideoInfo(),10);preloadNext()}
-      // 5) TIKKO SKANĒJA — ~30s pirms beigām (pašreizējā dziesma)
-      if(remaining<=30&&remaining>20&&!ovPhasesDone.just){ovPhasesDone.just=true;safeShowOverlay('just',v,10)}
+      // 5) TIKKO SKANĒJA — ~20s pirms beigām (pašreizējā dziesma, +10s)
+      if(remaining<=20&&remaining>10&&!ovPhasesDone.just){ovPhasesDone.just=true;safeShowOverlay('just',v,10)}
       // ═══ CROSSFADE MEHĀNIKA: 21s → 16s → 11s ═══
       // 21s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
       if(remaining<=21&&remaining>16&&!crossfading&&!isMuted){
@@ -2548,11 +2563,8 @@ function togglePower(){
     }
   }
 }
-document.getElementById('powerToggleInput').addEventListener('change',function(){
-  // LAT pagaidām nav pieejams — atgriežam uz ENG
-  if(!this.checked){this.checked=true;return}
-  switchLangGroup(this.checked ? 'arzemju' : 'latviesu');
-});
+// LAT pagaidām nav pieejams — bloķējam toggle pilnībā ar click preventDefault
+document.getElementById('powerToggleInput').addEventListener('click',function(e){e.preventDefault()});
 // CHILL poga — toggle spēli/lofi tieši
 document.getElementById('gamePanelBtn').addEventListener('click',function(){
   if(!isPoweredOn)return;
