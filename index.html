@@ -2026,7 +2026,7 @@ async function switchLangGroup(newGroup){
   });
 }
 
-// Ielādē datus no Google Sheets vai izmanto fallback
+// Ielādē datus no CMS vai izmanto fallback
 let channels=FALLBACK_CHANNELS;
 let cmsLoaded=false;
 
@@ -2282,7 +2282,8 @@ function startTV(){
     // Uzreiz sāk atskaņot — bez kalibrācijas joslām
     initYTPlayer();try{initSMS()}catch(e){setTimeout(initSMS,1500)};startProgressTracker();
     // VHS OSD — laika atjaunošana katru sekundi
-    setInterval(()=>{const osd=document.getElementById('vhsOsdTime');if(osd&&isPoweredOn){const now=new Date();osd.textContent=now.toLocaleTimeString('lv-LV',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}},1000);
+    const _osdTime=document.getElementById('vhsOsdTime');
+    setInterval(()=>{if(_osdTime&&isPoweredOn){const now=new Date();_osdTime.textContent=now.toLocaleTimeString('lv-LV',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}},1000);
   },600);
 }
 // Ielādē CMS datus sākuma ekrāna laikā, tad startē TV
@@ -2580,19 +2581,19 @@ function applyEraEffect(decade){
 }
 function startProgressTracker(){
   if(progressInterval)clearInterval(progressInterval);
+  const _progFill=document.getElementById('npProgressFill');
+  const _dimOv=document.getElementById('tvDimOverlay');
   progressInterval=setInterval(()=>{
     if(!playerReady||!isPoweredOn)return;
-    if(isGameChannel(currentChannel))return; // Spēlei nav progress tracking
     try{
       const ap=activeSlot==='a'?playerA:playerB;
       const d=ap.getDuration(),c=ap.getCurrentTime();
       if(d<=0)return;
       const v=channels[currentChannel].videos[currentVideoIdx[currentChannel]];
       const trimE=v.trimEnd||11;
-      const effectiveEnd=d>trimE?d-trimE:d; // endSeconds — kur playeris apstāsies
-      const remaining=effectiveEnd-c; // Laiks līdz efektīvajām beigām
-      const p=(c/effectiveEnd)*100+'%';document.getElementById('npProgressFill').style.width=p;
-      const dimOv=document.getElementById('tvDimOverlay');
+      const effectiveEnd=d>trimE?d-trimE:d;
+      const remaining=effectiveEnd-c;
+      if(_progFill)_progFill.style.width=(c/effectiveEnd)*100+'%';
       // ═══ OVERLAY SECĪBA — 6 fāzes ar kolīziju aizsardzību ═══
       // TAGAD SKAN(30s) → MID(vidū) → TAGAD SKAN#2(90s pirms) → NĀKAMAIS(60s pirms) → TIKKO SKANĒJA(30s pirms) → crossfade(16s pirms)
       const totalDur=effectiveEnd-(v.trimStart||6);
@@ -2610,7 +2611,7 @@ function startProgressTracker(){
       // ═══ CROSSFADE MEHĀNIKA: 21s → 16s → 11s ═══
       // 21s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
       if(remaining<=21&&remaining>16&&!crossfading&&!isMuted){
-        if(dimOv&&!dimOv.classList.contains('dimming'))dimOv.classList.add('dimming');
+        if(_dimOv&&!_dimOv.classList.contains('dimming'))_dimOv.classList.add('dimming');
         const fadeProgress=(remaining-16)/5; // 1.0 pie 21s → 0.0 pie 16s
         const fadeVol=Math.round(currentVolume*(0.4+0.6*fadeProgress));
         try{ap.setVolume(fadeVol)}catch(e){}
@@ -2629,7 +2630,6 @@ document.getElementById('channelGrid').addEventListener('click',(e)=>{
   const btn=e.target.closest('.ch-btn');if(!btn||!isPoweredOn)return;
   const ch=parseInt(btn.dataset.ch);if(ch===currentChannel)return;switchChannel(ch);
 });
-function isGameChannel(){return false}
 function switchChannel(ch){
   if(ch<0||ch>=channels.length)return;
   hideColorBars();clearWatchdog();skipChain=0; // Reset error state
@@ -3081,8 +3081,7 @@ function renderTicker(){
 }
 function renderLedChat(){ renderGameChat(); }
 function renderGameChat(){
-  if(typeof isGameChannel==='undefined'||typeof currentChannel==='undefined')return;
-  if(!isGameChannel(currentChannel))return;
+  if(!gameRunning)return;
   var overlay=document.getElementById('gameChatOverlay');if(!overlay)return;
   if(!smsMessages||smsMessages.length===0)return;
   var last=smsMessages[smsMessages.length-1];if(!last)return;
@@ -3182,8 +3181,8 @@ document.getElementById('tvScreen').addEventListener('click',(e)=>{
 document.addEventListener('keydown',(e)=>{
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
   const n=parseInt(e.key);
-  if(n>=1&&n<=9&&n<=channels.length&&!isGameChannel(n-1))switchChannel(n-1);
-  if(e.key==='0'&&channels.length>=10&&!isGameChannel(9))switchChannel(9);
+  if(n>=1&&n<=9&&n<=channels.length)switchChannel(n-1);
+  if(e.key==='0'&&channels.length>=10)switchChannel(9);
   // Kad spēle aktīva — bultiņas kontrolē tikai spēli, ne skaļumu/kanālus
   if(!gameRunning){
     if(e.key==='ArrowUp'){e.preventDefault();changeChannel(-1)}if(e.key==='ArrowDown'){e.preventDefault();changeChannel(1)}
@@ -3478,7 +3477,7 @@ function toggleInfoPopup(){
   ov.classList.toggle('show');
 }
 
-// KONTAKTU FORMA — tagad caur Google Sheets
+// KONTAKTU FORMA — caur Supabase
 function submitContactForm(e){
   e.preventDefault();
   const form=document.getElementById('contactForm');
