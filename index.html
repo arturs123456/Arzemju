@@ -1998,7 +1998,9 @@ let lastMusicChannel=null; // Pēdējais mūzikas kanāls (ne spēle) — lai ie
 let playerA=null,playerB=null,playerAReady=false,playerBReady=false;
 let activeSlot='a'; // 'a' vai 'b' — kurš player pašlaik ir aktīvs
 let crossfading=false,crossfadeTimer=null;
-const CROSSFADE_DURATION=5000; // 5 sek crossfade — jaunais aug, vecais izplēn
+const CROSSFADE_OUT=9000;       // vecā klipa audio fade-out: 9s (bija 5s, +4s ilgāk)
+const CROSSFADE_IN_DELAY=3000;  // jaunā klipa audio sākas 3s PĒC video swap
+const CROSSFADE_IN=6000;        // jaunā klipa audio fade-in: 6s
 let preloadedVideoId=null; // video ID kas jau ir ielādēts otrajā slotā
 
 // ═══ BROKEN VIDEO TRACKING & WATCHDOG ═══
@@ -2279,23 +2281,26 @@ function crossfadeTo(v){
   nextEl.classList.remove('yt-hidden');
   currEl.classList.add('yt-hidden');
   if(dimOv)dimOv.classList.remove('dimming');
-  // Volume crossfade: vecais fade out, jaunais fade in pa CROSSFADE_DURATION (5s)
-  const steps=25,interval=CROSSFADE_DURATION/steps;
-  let step=0;
+  // Volume crossfade: vecais fade out 9s, jaunais fade in pēc 3s delay (6s)
   const vol=isMuted?0:currentVolume;
   let currVol=vol;
   try{currVol=currPlayer.getVolume()||vol}catch(e){}
   clearInterval(crossfadeTimer);
+  const xfadeStart=Date.now();
   crossfadeTimer=setInterval(()=>{
-    step++;
-    const pct=step/steps;
-    // Vecais klips — fade out (vēl skan kādu brīdi bet kļūst arvien klusāks)
-    const fadeOutVol=Math.round(currVol*Math.cos(pct*Math.PI/2));
-    // Jaunais klips — fade in (sāk klusām, aug līdz pilnai skaņai)
-    const fadeInVol=Math.round(vol*Math.sin(pct*Math.PI/2));
+    const elapsed=Date.now()-xfadeStart;
+    // Vecais klips — fade out pa 9s (turpina skanēt ilgāk nekā video redzams)
+    const outPct=Math.min(1,elapsed/CROSSFADE_OUT);
+    const fadeOutVol=Math.round(currVol*Math.cos(outPct*Math.PI/2));
     try{currPlayer.setVolume(fadeOutVol)}catch(e){}
-    try{nextPlayer.setVolume(fadeInVol)}catch(e){}
-    if(step>=steps){
+    // Jaunais klips — audio sākas 3s pēc video swap, fade in pa 6s
+    if(elapsed>=CROSSFADE_IN_DELAY){
+      const inPct=Math.min(1,(elapsed-CROSSFADE_IN_DELAY)/CROSSFADE_IN);
+      const fadeInVol=Math.round(vol*Math.sin(inPct*Math.PI/2));
+      try{nextPlayer.setVolume(fadeInVol)}catch(e){}
+    }
+    // Viss pabeigts kad vecais ir pilnīgi nofeidots (9s)
+    if(elapsed>=CROSSFADE_OUT){
       clearInterval(crossfadeTimer);
       try{currPlayer.pauseVideo()}catch(e){}
       activeSlot=nextSlot;
@@ -2303,7 +2308,7 @@ function crossfadeTo(v){
       crossfading=false;
       try{nextPlayer.setVolume(vol)}catch(e){}
     }
-  },interval);
+  },200);
   updateNowPlaying();resetOverlayPhases();
   startWatchdog(v.id);
   // TIKKO SKANĒJA tagad parādās PIRMS crossfade (progress tracker, ~30s pirms beigām)
@@ -2490,7 +2495,7 @@ function startProgressTracker(){
       const remaining=effectiveEnd-c;
       if(_progFill)_progFill.style.width=(c/effectiveEnd)*100+'%';
       // ═══ OVERLAY SECĪBA — 6 fāzes ar kolīziju aizsardzību ═══
-      // TAGAD SKAN(30s) → MID(vidū) → TAGAD SKAN#2(90s pirms) → NĀKAMAIS(60s pirms) → TIKKO SKANĒJA(30s pirms) → crossfade(16s pirms)
+      // TAGAD SKAN(30s) → MID(vidū) → TAGAD SKAN#2(90s pirms) → NĀKAMAIS(60s pirms) → TIKKO SKANĒJA(30s pirms) → crossfade(21s pirms)
       const totalDur=effectiveEnd-(v.trimStart||6);
       // 1) TAGAD SKAN #1 — ~40s pēc klipa sākuma (+10s)
       if(c>=40&&!ovPhasesDone.now1){ovPhasesDone.now1=true;safeShowOverlay('now',v,10)}
@@ -2501,20 +2506,19 @@ function startProgressTracker(){
       if(totalDur>120&&remaining<=80&&remaining>65&&!ovPhasesDone.now2){ovPhasesDone.now2=true;safeShowOverlay('now',v,10)}
       // 4) NĀKAMAIS — ~60s pirms beigām + preload
       if(remaining<=60&&remaining>45&&!ovPhasesDone.next){ovPhasesDone.next=true;safeShowOverlay('next',getNextVideoInfo(),10);preloadNext()}
-      // 5) TIKKO SKANĒJA — ~20s pirms beigām (pašreizējā dziesma, +10s)
-      if(remaining<=20&&remaining>10&&!ovPhasesDone.just){ovPhasesDone.just=true;safeShowOverlay('just',v,10)}
-      // ═══ CROSSFADE MEHĀNIKA: 21s → 16s → 11s ═══
-      // 21s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
-      if(remaining<=21&&remaining>16&&!crossfading&&!isMuted){
+      // 5) TIKKO SKANĒJA — ~30s pirms beigām (pašreizējā dziesma, +10s, pirms crossfade@21s)
+      if(remaining<=30&&remaining>20&&!ovPhasesDone.just){ovPhasesDone.just=true;safeShowOverlay('just',v,10)}
+      // ═══ CROSSFADE MEHĀNIKA: 26s → 21s → 12s ═══
+      // 26s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
+      if(remaining<=26&&remaining>21&&!crossfading&&!isMuted){
         if(_dimOv&&!_dimOv.classList.contains('dimming'))_dimOv.classList.add('dimming');
-        const fadeProgress=(remaining-16)/5; // 1.0 pie 21s → 0.0 pie 16s
+        const fadeProgress=(remaining-21)/5; // 1.0 pie 26s → 0.0 pie 21s
         const fadeVol=Math.round(currentVolume*(0.4+0.6*fadeProgress));
         try{ap.setVolume(fadeVol)}catch(e){}
       }
-      // 16s pirms beigām: Jaunais klips parādās — crossfade sākas
-      // Jaunais redzams un sāk skanēt klusām, vecais vēl skan bet paslēpts
-      if(remaining<=16&&remaining>10&&!ovPhasesDone.xfade&&!crossfading){ovPhasesDone.xfade=true;nextVideo()}
-      // 10s pirms beigām: No vecā nekas nav palicis (crossfadeTo jau pabeidza fade)
+      // 21s pirms beigām: VIDEO swap — jaunais klips redzams, vecā audio vēl skan ~9s
+      if(remaining<=21&&remaining>15&&!ovPhasesDone.xfade&&!crossfading){ovPhasesDone.xfade=true;nextVideo()}
+      // 12s pirms beigām: Crossfade pilnībā beidzies (vecais apklusinājies, jaunais pilnā skaņā)
       // ═══ 30+ BADGE — parādās VIENLAICĪGI ar katru info overlay (fade in/out) ═══
       // Badge seko overlay fāzēm: TAGAD SKAN, MID, TAGAD SKAN#2, NĀKAMAIS, TIKKO SKANĒJA
       // (showAgeBadge izsaukts no safeShowOverlay/safeMidOverlay — sk. zemāk)
