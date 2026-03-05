@@ -2100,6 +2100,16 @@ function syncAllChannels(){
 }
 syncAllChannels();
 
+/* ═══ Kanālu neon krāsas — katram kanālam sava krāsa (sakrīt ar logo 6 slāņiem) ═══ */
+const CHANNEL_NEON_COLORS=[
+  {css:'var(--neon-green)',    hex:'#35ed7e', glow:'0 0 20px var(--neon-green),0 0 40px rgba(53,237,126,0.4)',   rgba:'53,237,126'},   // 0 Vecie
+  {css:'var(--neon-purple)',   hex:'#9b4dff', glow:'0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)',  rgba:'155,77,255'},   // 1 Jaunie
+  {css:'var(--hot-pink)',      hex:'#ff4cd2', glow:'0 0 20px var(--hot-pink),0 0 40px rgba(255,76,210,0.4)',     rgba:'255,76,210'},   // 2 Pop/Rock
+  {css:'var(--electric-blue)', hex:'#19d0e8', glow:'0 0 20px var(--electric-blue),0 0 40px rgba(25,208,232,0.4)',rgba:'25,208,232'},   // 3 Dance
+  {css:'var(--neon-orange)',   hex:'#ff6b2b', glow:'0 0 20px var(--neon-orange),0 0 40px rgba(255,107,43,0.4)',  rgba:'255,107,43'},   // 4 Rap/Funk
+  {css:'var(--neon-yellow)',   hex:'#ffe135', glow:'0 0 20px var(--neon-yellow),0 0 40px rgba(255,225,53,0.4)',  rgba:'255,225,53'}    // 5 Hipster
+];
+
 // Dinamiski ģenerēt kanālu pogas no CHANNEL_CONFIG
 function buildChannelGrid(){
   const grid=document.getElementById('channelGrid');
@@ -2112,16 +2122,6 @@ function buildChannelGrid(){
   });
 }
 buildChannelGrid();
-
-/* ═══ Kanālu neon krāsas — katram kanālam sava krāsa (sakrīt ar logo 6 slāņiem) ═══ */
-const CHANNEL_NEON_COLORS=[
-  {css:'var(--neon-green)',    hex:'#35ed7e', glow:'0 0 20px var(--neon-green),0 0 40px rgba(53,237,126,0.4)',   rgba:'53,237,126'},   // 0 Vecie
-  {css:'var(--neon-purple)',   hex:'#9b4dff', glow:'0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)',  rgba:'155,77,255'},   // 1 Jaunie
-  {css:'var(--hot-pink)',      hex:'#ff4cd2', glow:'0 0 20px var(--hot-pink),0 0 40px rgba(255,76,210,0.4)',     rgba:'255,76,210'},   // 2 Pop/Rock
-  {css:'var(--electric-blue)', hex:'#19d0e8', glow:'0 0 20px var(--electric-blue),0 0 40px rgba(25,208,232,0.4)',rgba:'25,208,232'},   // 3 Dance
-  {css:'var(--neon-orange)',   hex:'#ff6b2b', glow:'0 0 20px var(--neon-orange),0 0 40px rgba(255,107,43,0.4)',  rgba:'255,107,43'},   // 4 Rap/Funk
-  {css:'var(--neon-yellow)',   hex:'#ffe135', glow:'0 0 20px var(--neon-yellow),0 0 40px rgba(255,225,53,0.4)',  rgba:'255,225,53'}    // 5 Hipster
-];
 
 /* ═══ JAFFA logo — randomizēt krāsu secību katram apmeklējumam (6 slāņi) ═══ */
 (function(){
