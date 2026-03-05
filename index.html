@@ -2571,6 +2571,8 @@ function togglePower(){
   }
 }
 document.getElementById('powerToggleInput').addEventListener('change',function(){
+  // LAT pagaidām nav pieejams — atgriežam uz ENG
+  if(!this.checked){this.checked=true;return}
   switchLangGroup(this.checked ? 'arzemju' : 'latviesu');
 });
 // SPĒLE poga — atsevišķā panelī augšā
