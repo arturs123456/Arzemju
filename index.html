@@ -137,89 +137,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .logo-container{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .logo-sub-wrap{display:flex;flex-direction:column;align-items:flex-start;position:relative}
 .logo-main{position:relative;display:flex;align-items:center;justify-content:center}
-.logo-letter{font-family:'Bowlby One SC',var(--font-display),sans-serif;font-size:200px;font-weight:400;letter-spacing:6px;animation:letterGlow 2.5s ease-in-out infinite, stripeScroll 2.5s linear infinite;text-transform:uppercase;position:relative;z-index:2;display:inline-flex;align-items:center;line-height:0.85;
-  /* IBM-style horizontal stripes — animated downward */
-  background:repeating-linear-gradient(0deg,
-    var(--neon-purple) 0px,var(--neon-purple) 16px,
-    transparent 16px,transparent 22px);
-  background-size:100% 22px;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 15px var(--neon-purple)) drop-shadow(0 0 30px rgba(155,77,255,0.4))}
-.logo-L{margin-right:14px;font-family:'Bowlby One SC',sans-serif}
-.logo-M{margin-left:14px;font-family:'Sigmar One',sans-serif;font-size:220px;
-  animation:letterGlow 2.5s ease-in-out infinite,stripeScroll 2.5s linear infinite,neonFlicker 4s ease-in-out infinite alternate}
-/* Neon flicker — "M" burts reizēm mirgo/nodziest kā neona lampa */
-@keyframes neonFlicker{
-  0%,100%{opacity:1;filter:drop-shadow(0 0 15px var(--neon-purple)) drop-shadow(0 0 30px rgba(155,77,255,0.4))}
-  7%{opacity:1}
-  7.5%{opacity:0.3;filter:drop-shadow(0 0 2px var(--neon-purple))}
-  8%{opacity:1;filter:drop-shadow(0 0 15px var(--neon-purple)) drop-shadow(0 0 30px rgba(155,77,255,0.4))}
-  8.5%{opacity:0.6;filter:drop-shadow(0 0 4px var(--neon-purple))}
-  9%{opacity:1}
-  62%{opacity:1}
-  62.5%{opacity:0.2;filter:drop-shadow(0 0 1px var(--neon-purple))}
-  63%{opacity:1}
-  63.5%{opacity:0.5;filter:drop-shadow(0 0 3px var(--neon-purple))}
-  64%{opacity:1;filter:drop-shadow(0 0 15px var(--neon-purple)) drop-shadow(0 0 30px rgba(155,77,255,0.4))}
-}
-.logo-letter::before{content:'';position:absolute;inset:-15px;z-index:-1;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,0.15) 0px,rgba(0,0,0,0.15) 1px,transparent 1px,transparent 2px);
-  pointer-events:none;border-radius:12px;
-  backdrop-filter:blur(2px)}
-.logo-o-sphere{display:inline-flex;align-items:center;justify-content:center;width:160px;height:200px;position:relative;margin:0 -4px;flex-shrink:0;perspective:600px}
-.logo-o-sphere .logo-sphere{--c:var(--neon-purple);width:160px;height:160px;margin:0;left:10px;top:20px;position:absolute;transform-style:preserve-3d;transform:rotateX(-210deg) rotateY(45deg) rotateZ(185deg)}
-.logo-o-sphere .logo-sphere div{--sz:23%;width:var(--sz);height:var(--sz);position:absolute;border:0.15vmin solid var(--c);border-radius:100%;transform:rotateX(90deg) translateZ(86px);box-shadow:0 0 0.3vmin 0.3vmin var(--c),0 0 0.3vmin 0.3vmin var(--c) inset;background:transparent;left:50%;top:50%;margin-left:calc(var(--sz)/-2);margin-top:calc(var(--sz)/-2)}
-.logo-o-sphere .logo-sphere div:nth-child(2){--sz:40%;--dl:calc(var(--dv)*-2);transform:rotateX(90deg) translateZ(79px)}
-.logo-o-sphere .logo-sphere div:nth-child(3){--sz:55%;--dl:calc(var(--dv)*-3);transform:rotateX(90deg) translateZ(72px)}
-.logo-o-sphere .logo-sphere div:nth-child(4){--sz:68%;--dl:calc(var(--dv)*-4);transform:rotateX(90deg) translateZ(63px)}
-.logo-o-sphere .logo-sphere div:nth-child(5){--sz:78%;--dl:calc(var(--dv)*-5);transform:rotateX(90deg) translateZ(54px)}
-.logo-o-sphere .logo-sphere div:nth-child(6){--sz:86%;--dl:calc(var(--dv)*-6);transform:rotateX(90deg) translateZ(45px)}
-.logo-o-sphere .logo-sphere div:nth-child(7){--sz:92%;--dl:calc(var(--dv)*-7);transform:rotateX(90deg) translateZ(36px)}
-.logo-o-sphere .logo-sphere div:nth-child(8){--sz:96%;--dl:calc(var(--dv)*-8);transform:rotateX(90deg) translateZ(27px)}
-.logo-o-sphere .logo-sphere div:nth-child(9){--sz:99%;--dl:calc(var(--dv)*-9);transform:rotateX(90deg) translateZ(18px)}
-.logo-o-sphere .logo-sphere div:nth-child(10){--sz:100%;--dl:calc(var(--dv)*-10);transform:rotateX(90deg) translateZ(9px)}
-.logo-o-sphere .logo-sphere div:nth-child(11){--sz:100%;--dl:calc(var(--dv)*-11);transform:rotateX(90deg) translateZ(0)}
-.logo-o-sphere .logo-sphere div:nth-child(12){--sz:99%;--dl:calc(var(--dv)*-12);transform:rotateX(90deg) translateZ(-9px)}
-.logo-o-sphere .logo-sphere div:nth-child(13){--sz:96%;--dl:calc(var(--dv)*-13);transform:rotateX(90deg) translateZ(-18px)}
-.logo-o-sphere .logo-sphere div:nth-child(14){--sz:92%;--dl:calc(var(--dv)*-14);transform:rotateX(90deg) translateZ(-27px)}
-.logo-o-sphere .logo-sphere div:nth-child(15){--sz:86%;--dl:calc(var(--dv)*-15);transform:rotateX(90deg) translateZ(-36px)}
-.logo-o-sphere .logo-sphere div:nth-child(16){--sz:78%;--dl:calc(var(--dv)*-16);transform:rotateX(90deg) translateZ(-45px)}
-.logo-o-sphere .logo-sphere div:nth-child(17){--sz:68%;--dl:calc(var(--dv)*-17);transform:rotateX(90deg) translateZ(-54px)}
-.logo-o-sphere .logo-sphere div:nth-child(18){--sz:55%;--dl:calc(var(--dv)*-18);transform:rotateX(90deg) translateZ(-63px)}
-.logo-o-sphere .logo-sphere div:nth-child(19){--sz:40%;--dl:calc(var(--dv)*-19);transform:rotateX(90deg) translateZ(-72px)}
-.logo-o-sphere .logo-sphere div:nth-child(20){--sz:23%;--dl:calc(var(--dv)*-20);transform:rotateX(90deg) translateZ(-79px)}
-.logo-o-sphere .logo-sphere div:nth-child(21){--sz:10%;--dl:calc(var(--dv)*-21);transform:rotateX(90deg) translateZ(-86px)}
-.logo-tv{font-family:'Gveret Levin',cursive;font-size:110px;font-weight:400;color:var(--electric-blue);letter-spacing:2px;position:relative;top:-30px;margin-left:-60px;z-index:3;
-  transform:rotate(-14deg);
-  text-shadow:0 0 16px rgba(25,208,232,0.9),0 0 32px rgba(25,208,232,0.5);
-  display:inline-block;align-self:flex-start;
-  -webkit-text-stroke:2px rgba(25,208,232,0.4)}
-.logo-sphere-wrap{position:absolute;inset:-25px;display:flex;align-items:center;justify-content:center;pointer-events:none;perspective:600px}
-.logo-sphere{--c:var(--neon-purple);position:absolute;width:160px;height:160px;transform-style:preserve-3d;animation:sphereSpin 10s linear infinite}
-.logo-sphere div{--sz:23%;--s:2s;--d:40;--dv:calc(var(--s)/var(--d));--dl:calc(var(--dv)*-1);width:var(--sz);height:var(--sz);position:absolute;border:0.15vmin solid var(--c);border-radius:100%;transform:rotateX(90deg) translateZ(78px);box-shadow:0 0 0.3vmin 0.3vmin var(--c),0 0 0.3vmin 0.3vmin var(--c) inset;animation:sphereShine var(--s) linear var(--dl) infinite;background:transparent;left:50%;top:50%;margin-left:calc(var(--sz)/-2);margin-top:calc(var(--sz)/-2)}
-.logo-sphere div:nth-child(2){--sz:40%;--dl:calc(var(--dv)*-2);transform:rotateX(90deg) translateZ(71px)}
-.logo-sphere div:nth-child(3){--sz:55%;--dl:calc(var(--dv)*-3);transform:rotateX(90deg) translateZ(64px)}
-.logo-sphere div:nth-child(4){--sz:68%;--dl:calc(var(--dv)*-4);transform:rotateX(90deg) translateZ(56px)}
-.logo-sphere div:nth-child(5){--sz:78%;--dl:calc(var(--dv)*-5);transform:rotateX(90deg) translateZ(48px)}
-.logo-sphere div:nth-child(6){--sz:86%;--dl:calc(var(--dv)*-6);transform:rotateX(90deg) translateZ(40px)}
-.logo-sphere div:nth-child(7){--sz:92%;--dl:calc(var(--dv)*-7);transform:rotateX(90deg) translateZ(32px)}
-.logo-sphere div:nth-child(8){--sz:96%;--dl:calc(var(--dv)*-8);transform:rotateX(90deg) translateZ(24px)}
-.logo-sphere div:nth-child(9){--sz:99%;--dl:calc(var(--dv)*-9);transform:rotateX(90deg) translateZ(16px)}
-.logo-sphere div:nth-child(10){--sz:100%;--dl:calc(var(--dv)*-10);transform:rotateX(90deg) translateZ(8px)}
-.logo-sphere div:nth-child(11){--sz:100%;--dl:calc(var(--dv)*-11);transform:rotateX(90deg) translateZ(0)}
-.logo-sphere div:nth-child(12){--sz:99%;--dl:calc(var(--dv)*-12);transform:rotateX(90deg) translateZ(-8px)}
-.logo-sphere div:nth-child(13){--sz:96%;--dl:calc(var(--dv)*-13);transform:rotateX(90deg) translateZ(-16px)}
-.logo-sphere div:nth-child(14){--sz:92%;--dl:calc(var(--dv)*-14);transform:rotateX(90deg) translateZ(-24px)}
-.logo-sphere div:nth-child(15){--sz:86%;--dl:calc(var(--dv)*-15);transform:rotateX(90deg) translateZ(-32px)}
-.logo-sphere div:nth-child(16){--sz:78%;--dl:calc(var(--dv)*-16);transform:rotateX(90deg) translateZ(-40px)}
-.logo-sphere div:nth-child(17){--sz:68%;--dl:calc(var(--dv)*-17);transform:rotateX(90deg) translateZ(-48px)}
-.logo-sphere div:nth-child(18){--sz:55%;--dl:calc(var(--dv)*-18);transform:rotateX(90deg) translateZ(-56px)}
-.logo-sphere div:nth-child(19){--sz:40%;--dl:calc(var(--dv)*-19);transform:rotateX(90deg) translateZ(-64px)}
-.logo-sphere div:nth-child(20){--sz:23%;--dl:calc(var(--dv)*-20);transform:rotateX(90deg) translateZ(-71px)}
-.logo-sphere div:nth-child(21){--sz:10%;--dl:calc(var(--dv)*-21);transform:rotateX(90deg) translateZ(-78px)}
-.lomk-sub{font-family:'Handjet',var(--font-main),sans-serif;font-size:26px;font-weight:700;color:rgba(224,227,255,0.65);letter-spacing:8px;text-transform:uppercase;margin-top:34px;width:100%;text-align:left;padding-left:0;margin-left:auto;margin-right:auto;position:relative;left:7px;top:10px;align-self:flex-start}
-.start-sub{font-family:var(--font-main);font-size:18px;font-weight:400;color:rgba(224,227,255,0.35);letter-spacing:5px;width:auto;text-align:left;margin-top:10px;position:relative;z-index:10;align-self:flex-start;margin-left:20px;left:171.418px;top:12.25px}
 
 /* CALIBRATION (УЭИТ) */
 .calib-screen{position:absolute;inset:0;z-index:25;display:none;flex-direction:column;border-radius:inherit}
@@ -370,41 +287,22 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   48%{transform:none;filter:none}
 }
 @keyframes miniStripeScroll{0%{background-position:0 0}100%{background-position:0 7px}}
-.screen-logo-l{font-family:'Bowlby One SC',sans-serif;font-size:58px;font-weight:400;letter-spacing:2px;line-height:1;text-transform:uppercase;
+/* ═══ JAFFA.tv logo — sākuma ekrāns ═══ */
+.logo-jaffa{font-family:'Bowlby One SC',var(--font-display),sans-serif;font-size:90px;font-weight:400;letter-spacing:4px;text-transform:uppercase;line-height:0.85;position:relative;z-index:2;
+  background:repeating-linear-gradient(0deg,var(--neon-purple) 0px,var(--neon-purple) 12px,transparent 12px,transparent 16px);
+  background-size:100% 16px;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 15px var(--neon-purple)) drop-shadow(0 0 30px rgba(155,77,255,0.4));
+  animation:letterGlow 2.5s ease-in-out infinite,stripeScroll 2.5s linear infinite}
+.logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:48px;font-weight:400;color:var(--electric-blue);letter-spacing:2px;position:relative;top:-10px;margin-left:4px;z-index:3;
+  transform:rotate(-10deg);display:inline-block;
+  text-shadow:0 0 16px rgba(25,208,232,0.9),0 0 32px rgba(25,208,232,0.5);-webkit-text-stroke:1px rgba(25,208,232,0.3)}
+/* ═══ JAFFA.tv logo — ekrāna augšā pa kreisi ═══ */
+.screen-logo-jaffa{font-family:'Bowlby One SC',sans-serif;font-size:30px;font-weight:400;letter-spacing:2px;line-height:1;text-transform:uppercase;
   background:repeating-linear-gradient(0deg,var(--neon-purple) 0px,var(--neon-purple) 5px,transparent 5px,transparent 7px);
   background-size:100% 7px;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 6px var(--neon-purple));
-  animation:miniStripeScroll 2.5s linear infinite}
-.screen-logo-o-sphere{display:inline-flex;align-items:center;justify-content:center;width:60px;height:74px;position:relative;margin:0 -1px;flex-shrink:0;perspective:320px}
-.screen-logo-o-sphere .screen-logo-sphere{--c:var(--neon-purple);width:60px;height:60px;margin:0;left:1px;top:6px;position:absolute;transform-style:preserve-3d;animation:sphereSpin 10s linear infinite}
-.screen-logo-o-sphere .screen-logo-sphere div{--sz:23%;--s:2s;--d:40;--dv:calc(var(--s)/var(--d));--dl:calc(var(--dv)*-1);width:var(--sz);height:var(--sz);position:absolute;border:0.12vmin solid var(--c);border-radius:100%;transform:rotateX(90deg) translateZ(34px);box-shadow:0 0 0.24vmin 0.24vmin var(--c),0 0 0.24vmin 0.24vmin var(--c) inset;animation:sphereShine var(--s) linear var(--dl) infinite;background:transparent;left:50%;top:50%;margin-left:calc(var(--sz)/-2);margin-top:calc(var(--sz)/-2)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(2){--sz:40%;--dl:calc(var(--dv)*-2);transform:rotateX(90deg) translateZ(30px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(3){--sz:55%;--dl:calc(var(--dv)*-3);transform:rotateX(90deg) translateZ(27px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(4){--sz:68%;--dl:calc(var(--dv)*-4);transform:rotateX(90deg) translateZ(23px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(5){--sz:78%;--dl:calc(var(--dv)*-5);transform:rotateX(90deg) translateZ(20px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(6){--sz:86%;--dl:calc(var(--dv)*-6);transform:rotateX(90deg) translateZ(15px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(7){--sz:92%;--dl:calc(var(--dv)*-7);transform:rotateX(90deg) translateZ(11px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(8){--sz:96%;--dl:calc(var(--dv)*-8);transform:rotateX(90deg) translateZ(8px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(9){--sz:99%;--dl:calc(var(--dv)*-9);transform:rotateX(90deg) translateZ(5px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(10){--sz:100%;--dl:calc(var(--dv)*-10);transform:rotateX(90deg) translateZ(2px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(11){--sz:100%;--dl:calc(var(--dv)*-11);transform:rotateX(90deg) translateZ(0)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(12){--sz:99%;--dl:calc(var(--dv)*-12);transform:rotateX(90deg) translateZ(-2px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(13){--sz:96%;--dl:calc(var(--dv)*-13);transform:rotateX(90deg) translateZ(-5px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(14){--sz:92%;--dl:calc(var(--dv)*-14);transform:rotateX(90deg) translateZ(-8px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(15){--sz:86%;--dl:calc(var(--dv)*-15);transform:rotateX(90deg) translateZ(-11px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(16){--sz:78%;--dl:calc(var(--dv)*-16);transform:rotateX(90deg) translateZ(-15px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(17){--sz:68%;--dl:calc(var(--dv)*-17);transform:rotateX(90deg) translateZ(-20px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(18){--sz:55%;--dl:calc(var(--dv)*-18);transform:rotateX(90deg) translateZ(-23px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(19){--sz:40%;--dl:calc(var(--dv)*-19);transform:rotateX(90deg) translateZ(-27px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(20){--sz:23%;--dl:calc(var(--dv)*-20);transform:rotateX(90deg) translateZ(-30px)}
-.screen-logo-o-sphere .screen-logo-sphere div:nth-child(21){--sz:10%;--dl:calc(var(--dv)*-21);transform:rotateX(90deg) translateZ(-34px)}
-.screen-logo-m{font-family:'Sigmar One',sans-serif;font-size:56px;font-weight:400;letter-spacing:2px;line-height:1;text-transform:uppercase;
-  background:repeating-linear-gradient(0deg,var(--neon-purple) 0px,var(--neon-purple) 5px,transparent 5px,transparent 7px);
-  background-size:100% 7px;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  filter:drop-shadow(0 0 6px var(--neon-purple));
-  animation:miniStripeScroll 2.5s linear infinite}
-.screen-logo-tv{font-family:'Gveret Levin',cursive;font-size:28px;font-weight:400;color:var(--electric-blue);letter-spacing:1px;
-  text-shadow:0 0 8px rgba(25,208,232,0.7);transform:rotate(-8deg);display:inline-block;margin-left:-10px;align-self:flex-start;position:relative;top:4px}
+  filter:drop-shadow(0 0 6px var(--neon-purple));animation:miniStripeScroll 2.5s linear infinite}
+.screen-logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:15px;font-weight:400;color:var(--electric-blue);letter-spacing:1px;
+  text-shadow:0 0 8px rgba(25,208,232,0.7);transform:rotate(-6deg);display:inline-block;margin-left:1px;position:relative;top:2px}
 .ch-switch-overlay{position:absolute;top:13px;right:14px;z-index:15;font-family:'Press Start 2P',monospace;font-size:20px;font-weight:400;color:#fff;
   text-shadow:0 0 10px rgba(255,255,255,0.5);opacity:0;transition:opacity .15s;background:rgba(0,0,0,0.65);padding:6px 16px;border:none;border-radius:4px;letter-spacing:2px;
   animation:vhsRgbText 1.5s steps(9) infinite alternate}
@@ -497,8 +395,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .tv-mid-row:nth-child(3) .tv-mid-song{color:rgba(200,210,240,0.5);font-size:15px}
 /* 30+ vecuma brīdinājums — retro TV stilā */
 .tv-age-badge{position:absolute;bottom:100px;right:20px;z-index:15;pointer-events:none;
-  transform:translateX(150%);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s ease}
-.tv-age-badge.show{transform:translateX(0);opacity:1}
+  opacity:0;transition:opacity .4s ease}
+.tv-age-badge.show{opacity:1}
 .tv-age-badge-inner{font-family:'Press Start 2P',monospace;font-size:clamp(14px,2vw,22px);color:#fff;
   letter-spacing:2px;line-height:1;
   text-shadow:0 0 8px rgba(255,255,255,0.5),0 0 20px rgba(255,60,60,0.3),2px 2px 0 rgba(0,0,0,0.8);
@@ -1097,36 +995,24 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 
 /* MOBILE — sākuma ekrāna logo samazināšana */
 @media(max-width:540px){
-  .logo-letter{font-size:120px !important}
-  .logo-letter.logo-M{font-size:130px !important}
-  .logo-o-sphere{width:100px;height:130px}
-  .logo-tv{font-size:65px}
-  .lomk-sub{font-size:18px}
+  .logo-jaffa{font-size:60px !important;letter-spacing:3px}
+  .logo-dot-tv{font-size:32px;top:-6px}
   .start-btn{width:90px;height:90px;margin-top:24px}
   .start-btn .play-tri{border-width:20px 0 20px 35px}
   .start-btn-label{font-size:12px;bottom:-28px}
 }
 @media(max-width:400px){
-  .logo-letter{font-size:80px !important}
-  .logo-letter.logo-M{font-size:90px !important}
-  .logo-o-sphere{width:70px;height:90px}
-  .logo-tv{font-size:42px}
-  .lomk-sub{font-size:15px;letter-spacing:3px}
+  .logo-jaffa{font-size:44px !important;letter-spacing:2px}
+  .logo-dot-tv{font-size:24px;top:-4px}
   .start-btn{width:76px;height:76px;margin-top:18px}
   .start-btn .play-tri{border-width:16px 0 16px 28px}
-  .start-sub{font-size:14px}
 }
 
 /* MOBILE LANDSCAPE — Sākuma ekrāns */
 @media(max-height:500px) and (orientation:landscape){
   .start-screen{gap:6px;justify-content:center}
-  .logo-letter{font-size:88px !important}
-  .logo-letter.logo-M{font-size:98px !important}
-  .logo-o-sphere{width:70px;height:70px}
-  .logo-o-sphere .logo-sphere{width:68px;height:68px}
-  .logo-tv{font-size:44px;top:-16px;margin-left:-32px}
-  .lomk-sub{font-size:14px;letter-spacing:4px;margin-top:6px}
-  .start-sub{font-size:12px;margin-top:2px}
+  .logo-jaffa{font-size:48px !important;letter-spacing:2px}
+  .logo-dot-tv{font-size:26px;top:-6px}
   .start-age-gate{font-size:13px;letter-spacing:2px;padding:6px 14px;margin-top:8px;max-width:240px}
   .start-btn{width:60px;height:60px;margin-top:8px}
   .start-btn .play-tri{border-width:13px 0 13px 22px}
@@ -1134,13 +1020,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 }
 @media(max-height:380px) and (orientation:landscape){
   .start-screen{gap:3px}
-  .logo-letter{font-size:62px !important}
-  .logo-letter.logo-M{font-size:70px !important}
-  .logo-o-sphere{width:50px;height:50px}
-  .logo-o-sphere .logo-sphere{width:48px;height:48px}
-  .logo-tv{font-size:30px;top:-10px;margin-left:-22px}
-  .lomk-sub{font-size:11px;letter-spacing:3px;margin-top:3px}
-  .start-sub{font-size:10px;margin-top:1px}
+  .logo-jaffa{font-size:34px !important;letter-spacing:1px}
+  .logo-dot-tv{font-size:18px;top:-4px}
   .start-age-gate{font-size:11px;letter-spacing:1px;padding:4px 10px;margin-top:4px;max-width:200px}
   .start-btn{width:48px;height:48px;margin-top:4px}
   .start-btn .play-tri{border-width:11px 0 11px 18px}
@@ -1224,12 +1105,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   .panel-bottom-zone{padding:3px 0 2px}
   /* Logo uz ekrāna */
   .screen-logo{top:4px;left:6px;padding:2px 6px;gap:1px}
-  .screen-logo-l{font-size:18px}
-  .screen-logo-m{font-size:17px}
-  .screen-logo-o-sphere{width:18px;height:22px}
-  .screen-logo-o-sphere .screen-logo-sphere{width:18px;height:18px}
-  .screen-logo-tv{font-size:9px}
-  .screen-logo-l,.screen-logo-m{text-shadow:none}
+  .screen-logo-jaffa{font-size:16px}
+  .screen-logo-dot-tv{font-size:8px}
+  .screen-logo-jaffa{text-shadow:none}
   /* Indicator bars kompaktāki */
   .indicator-bars{padding-right:4px}
   .indicator-bar{width:3px;height:12px}
@@ -1263,11 +1141,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   .panel-bottom-zone{padding:2px 0}
   /* Logo */
   .screen-logo{top:2px;left:4px;padding:2px 4px;gap:0}
-  .screen-logo-l{font-size:14px}
-  .screen-logo-m{font-size:13px}
-  .screen-logo-o-sphere{width:14px;height:17px}
-  .screen-logo-o-sphere .screen-logo-sphere{width:14px;height:14px}
-  .screen-logo-tv{font-size:7px}
+  .screen-logo-jaffa{font-size:12px}
+  .screen-logo-dot-tv{font-size:6px}
 }
 
 /* "PAGRIEZ TELEFONU" OVERLAY — tikai portrait mobilajā */
@@ -1587,16 +1462,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   <div class="logo-container">
     <div class="logo-sub-wrap">
       <div class="logo-main">
-        <span class="logo-letter logo-L">L</span><span class="logo-o-sphere"><span class="logo-sphere"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></span></span><span class="logo-letter logo-M">M</span><span class="logo-tv">tv</span>
+        <span class="logo-jaffa">JAFFA</span><span class="logo-dot-tv">.tv</span>
       </div>
-      <div class="lomk-sub">Latvijas Online Mūzikas Kanāls</div>
-      <div class="start-sub">kopš 2003. gada</div>
     </div>
   </div>
   <div class="start-age-gate">YOU MUST BE 30+ TO VIEW THIS CONTENT</div>
   <button class="start-btn" id="startBtn" onclick="launchTV()">
     <div class="play-tri"></div>
-    <span class="start-btn-label">CHILL</span>
+    <span class="start-btn-label"></span>
   </button>
 </div>
 
@@ -1664,7 +1537,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
         <div class="era-overlay-vcr-band"></div>
         <div class="era-overlay-vcr-grain"></div>
         <div class="era-overlay-vcr-glitch"></div>
-        <div class="screen-logo"><span class="screen-logo-l">L</span><span class="screen-logo-o-sphere"><span class="screen-logo-sphere"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></span></span><span class="screen-logo-m">M</span><span class="screen-logo-tv">tv</span></div>
+        <div class="screen-logo"><span class="screen-logo-jaffa">JAFFA</span><span class="screen-logo-dot-tv">.tv</span></div>
         <button class="fs-exit-btn" id="fsExitBtn" onclick="toggleFullscreen()" title="Iziet no pilnekrāna">✕</button>
         <div class="ch-switch-overlay" id="chOverlay"></div>
         <div class="now-playing" id="nowPlaying">
@@ -1909,9 +1782,6 @@ const GENRE_CHANNEL_MAP = {
   'trip-hop':'HIPSTER','folk':'HIPSTER','ambient':'HIPSTER','lo-fi':'HIPSTER'
 };
 
-// (Legacy) Google Sheets URL — vairs netiek izmantots
-const SHEETS_CSV_URL = '';
-
 // 6 kanāli: 2 pēc gada + 4 pēc žanra
 const CHANNEL_CONFIG = [
   {key:'VECIE',   name:'Vecie',    label:'Vecie',     color:'#35ed7e',  icon:'📻'},  // līdz 1999
@@ -1944,123 +1814,42 @@ const FALLBACK_CHANNELS=[
   ]}
 ];
 
-// CSV parsēšana
-function parseCSV(text){
-  const lines=text.split('\n').filter(l=>l.trim());
-  if(lines.length<2)return[];
-  const headers=parseCSVLine(lines[0]).map(h=>h.trim());
-  const rows=[];
-  for(let i=1;i<lines.length;i++){
-    const vals=parseCSVLine(lines[i]);
-    const row={};
-    headers.forEach((h,j)=>{row[h]=vals[j]?.trim()||''});
-    rows.push(row);
-  }
-  return rows;
+// ═══ DETERMINISTIC DAILY SHUFFLE ═══
+// Mulberry32 seeded PRNG — visi lietotāji vienā dienā dabū vienādu secību
+function mulberry32(seed){
+  return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}
 }
-function parseCSVLine(line){
-  const result=[];let current='';let inQuotes=false;
-  for(let i=0;i<line.length;i++){
-    const c=line[i];
-    if(c==='"'){if(inQuotes&&line[i+1]==='"'){current+='"';i++}else{inQuotes=!inQuotes}}
-    else if(c===','&&!inQuotes){result.push(current);current=''}
-    else{current+=c}
-  }
-  result.push(current);
-  return result;
+function getDailySeed(){const d=new Date();return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate()}
+// Fisher-Yates ar seeded PRNG
+function seededShuffle(arr,rng){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
 }
-
-// Sheets datu pārveidošana par channels masīvu
-// CSV kolonnu nosaukumi ir gari ("POP, POP-ROKS, DISCO" utt.)
-// Meklējam pēc prefiksa un arī piešķiram pēc gada (RETRO/ATMODA/JAUNUMI)
-function findCSVColumn(headers,prefix){
-  if(!prefix)return null; // game kanālam nav CSV prefiksa
-  if(prefix.startsWith('_'))return null; // _ATMODA = nav CSV kolonna, aprēķina pēc gada
-  return headers.find(h=>h.toUpperCase().startsWith(prefix.toUpperCase()))||null;
-}
-// Papildu CSV kolonnas kas mapējas uz mūsu kanāliem
-const EXTRA_CSV_MAP=[
-  // EV / Konkursi → LIVE
-  {csvPrefix:'DZIESMU',     targetKey:'LIVE'},
-  // Folk, Etno, Akadēmiskā → JAZZ
-  {csvPrefix:'FOLK',        targetKey:'JAZZ'},
-  {csvPrefix:'Akadēmiskā',  targetKey:'JAZZ'},
-  // Regejs, Ska → ROKS
-  {csvPrefix:'REGEJS',      targetKey:'ROKS'},
-  // Electro, EDM, Latin → DANCE
-  {csvPrefix:'ELECTRO',     targetKey:'DANCE'},
-  {csvPrefix:'EDM',         targetKey:'DANCE'},
-  {csvPrefix:'LATĪŅ',       targetKey:'DANCE'},
-  // Blues, Ambient, Klasiskā → JAZZ
-  {csvPrefix:'BLUES',       targetKey:'JAZZ'},
-  {csvPrefix:'AMBIENT',     targetKey:'JAZZ'},
-  {csvPrefix:'KLASISK',     targetKey:'JAZZ'},
-];
-function sheetsToChannels(rows){
-  if(!rows||rows.length===0)return[];
-  // Atrast visus CSV header nosaukumus
-  const headers=Object.keys(rows[0]);
-  // Izveidot mapping: kanāla key → CSV kolonnas nosaukums
-  const colMap={};
-  CHANNEL_CONFIG.forEach(cfg=>{
-    const col=findCSVColumn(headers,cfg.csvPrefix);
-    if(col)colMap[cfg.key]=col;
-  });
-  // Extra CSV kolonnas
-  const extraCols=[];
-  EXTRA_CSV_MAP.forEach(m=>{
-    const col=headers.find(h=>h.toUpperCase().startsWith(m.csvPrefix.toUpperCase()));
-    if(col)extraCols.push({col,targetKey:m.targetKey});
-  });
-  // Inicializēt kanālu map
-  const channelMap={};
-  CHANNEL_CONFIG.forEach(cfg=>{channelMap[cfg.key]={name:cfg.name,label:cfg.label,color:cfg.color,videos:[]}});
-  // Apstrādāt katru rindu
-  rows.forEach(row=>{
-    const id=row['YouTube ID']||row['youtube_id']||'';
-    if(!id)return;
-    const artist=row['Izpildītājs']||row['artist']||'';
-    const song=row['Dziesma']||row['song']||'';
-    const album=row['Albums']||row['album']||'';
-    const year=parseInt(row['Gads']||row['year'])||0;
-    const duration=parseInt(row['Garums']||row['duration'])||240;
-    const trimStart=parseInt(row['Trim Start']||row['trim_start'])||6;
-    const trimEnd=parseInt(row['Trim End']||row['trim_end'])||11;
-    // Era automātiski pēc gada: ≤1989=vintage, 1990-2000=vcr, 2001+=modern
-    const era=year>0?(year<=1989?'vintage':year<=2000?'vcr':'modern'):'modern';
-    const video={id,title:artist+' — '+song,artist,song,album,year,decade:era,duration,trimStart,trimEnd};
-    const addedTo=new Set();
-    // 1) Pārbaudīt tiešās CSV kolonnas (X atzīmes)
-    CHANNEL_CONFIG.forEach(cfg=>{
-      const col=colMap[cfg.key];
-      if(!col)return;
-      const val=(row[col]||'').trim().toUpperCase();
-      if(val==='X'||val==='1'||val==='TRUE'){
-        channelMap[cfg.key].videos.push(video);
-        addedTo.add(cfg.key);
+// Nodrošina ka viens izpildītājs nav blakus sev — vairākas iterācijas
+function spaceArtists(videos){
+  for(let pass=0;pass<5;pass++){
+    let swapped=false;
+    for(let i=1;i<videos.length;i++){
+      if(videos[i].artist&&videos[i].artist===videos[i-1].artist){
+        // Meklē swap kandidātu tālāk (cits izpildītājs, nerada jaunu konfliktu)
+        for(let j=i+2;j<videos.length;j++){
+          const a=videos[j].artist;
+          if(a!==videos[i].artist&&(i-2<0||a!==videos[i-2].artist)&&(j+1>=videos.length||a!==videos[j+1].artist)){
+            [videos[i],videos[j]]=[videos[j],videos[i]];swapped=true;break;
+          }
+        }
       }
-    });
-    // 2) Extra kolonnas (FOLK→JAZZ, REGEJS→ROKS, Akadēmiskā→JAZZ, ELECTRO→DANCE)
-    extraCols.forEach(ec=>{
-      const val=(row[ec.col]||'').trim().toUpperCase();
-      if((val==='X'||val==='1'||val==='TRUE')&&!addedTo.has(ec.targetKey)){
-        channelMap[ec.targetKey].videos.push(video);
-        addedTo.add(ec.targetKey);
-      }
-    });
-    // 3) Automātiski pēc gada: RETRO / ATMODA / JAUNUMI
-    if(year>0){
-      if(year<=1990&&!addedTo.has('RETRO')){channelMap['RETRO'].videos.push(video);addedTo.add('RETRO')}
-      if(year>=1991&&year<=2021&&!addedTo.has('ATMODA')){channelMap['ATMODA'].videos.push(video);addedTo.add('ATMODA')}
-      if(year>=2022&&!addedTo.has('JAUNUMI')){channelMap['JAUNUMI'].videos.push(video);addedTo.add('JAUNUMI')}
     }
-  });
-  // Filtrē tukšos kanālus (bet saglabā game kanālus)
-  return CHANNEL_CONFIG.map((cfg,i)=>{
-    const ch=channelMap[cfg.key];
-    if(cfg.type==='game'){ch._isGame=true;ch.videos=[{id:'_game_',title:'Synthwave Racer',artist:'LOM',song:'Game',duration:9999}]}
-    return ch;
-  }).filter(ch=>ch.videos.length>0||ch._isGame);
+    if(!swapped)break;
+  }
+  return videos;
+}
+// Galvenā shuffle funkcija — katru dienu jauna secība, bet visiem vienāda
+function dailyShuffleChannel(videos,channelIdx){
+  if(videos.length<=2)return videos;
+  const rng=mulberry32(getDailySeed()*100+(channelIdx||0));
+  return spaceArtists(seededShuffle(videos,rng));
 }
 
 // ═══ SUPABASE → CHANNELS ═══
@@ -2116,7 +1905,9 @@ async function loadFromSupabase(group){
     }
     if(allSongs.length===0)return false;
     const parsed=supabaseToChannels(allSongs);
-    if(parsed.length>0){channels=parsed;cmsLoaded=true;console.log('CMS: Ielādētas',allSongs.length,'dziesmas no Supabase (',group,')');return true}
+    // Deterministic daily shuffle — katru dienu jauna secība, izpildītāji neklasterējas
+    parsed.forEach((ch,i)=>{ch.videos=dailyShuffleChannel(ch.videos,i)});
+    if(parsed.length>0){channels=parsed;cmsLoaded=true;console.log('CMS: Ielādētas',allSongs.length,'dziesmas no Supabase (',group,'), shuffled seed:',getDailySeed());return true}
     return false;
   }catch(e){console.warn('Supabase nav pieejams, izmanto fallback',e);return false}
 }
@@ -2136,20 +1927,6 @@ async function switchLangGroup(newGroup){
 // Ielādē datus no Google Sheets vai izmanto fallback
 let channels=FALLBACK_CHANNELS;
 let cmsLoaded=false;
-
-async function loadFromSheets(){
-  if(!SHEETS_CSV_URL)return false;
-  try{
-    const resp=await fetch(SHEETS_CSV_URL);
-    if(!resp.ok)return false;
-    const text=await resp.text();
-    const rows=parseCSV(text);
-    if(rows.length===0)return false;
-    const parsed=sheetsToChannels(rows);
-    if(parsed.length>0){channels=parsed;cmsLoaded=true;console.log('CMS: Ielādētas',rows.length,'dziesmas no Google Sheets');return true}
-    return false;
-  }catch(e){console.warn('CMS: Google Sheets nav pieejams, izmanto fallback',e);return false}
-}
 
 let currentChannel=0,currentVideoIdx={},isPoweredOn=true,player=null,playerReady=false,smsMessages=[],progressInterval=null,isMuted=false,currentVolume=80,volumeBeforeMute=80;
 let lastMusicChannel=null; // Pēdējais mūzikas kanāls (ne spēle) — lai ieslēdzot atgriežas
@@ -2349,8 +2126,6 @@ function preloadNext(){
 function crossfadeTo(v){
   if(!playerReady)return;
   if(crossfading)return;
-  // Saglabā pašreizējo dziesmu kā "iepriekšējo" pirms pārslēgšanas
-  try{previousVideo=channels[currentChannel].videos[currentVideoIdx[currentChannel]]}catch(e){previousVideo=null}
   crossfading=true;
   const trimS=v.trimStart||6,trimE=v.trimEnd||11,dur=v.duration||0;
   const opts={videoId:v.id,startSeconds:trimS};
@@ -2402,12 +2177,7 @@ function crossfadeTo(v){
   },interval);
   updateNowPlaying();resetOverlayPhases();
   startWatchdog(v.id);
-  // TIKKO SKANĒJA — ~10s pēc crossfade (rāda iepriekšējo dziesmu 10s)
-  if(previousVideo){
-    const tJust=setTimeout(()=>{safeShowOverlay('just',previousVideo,10)},10000);
-    ovTimers.push(tJust);
-  }
-  // TAGAD SKAN — progress tracker parādīs pie c>=20 (kolīziju sistēma aizkavēs aiz TIKKO)
+  // TIKKO SKANĒJA tagad parādās PIRMS crossfade (progress tracker, ~30s pirms beigām)
   try{if(window._ttsPlayPending)window._ttsPlayPending()}catch(e){}
 }
 function playVideo(v){crossfadeTo(v)}
@@ -2478,15 +2248,14 @@ function parseVideoMeta(v){
   return{artist:'',title:v.title};
 }
 // ====== TV OVERLAY SISTĒMA — 6 fāzes ar kolīziju aizsardzību ======
-// Secība: TAGAD SKAN → [MID] → TAGAD SKAN → NĀKAMAIS → crossfade → TIKKO SKANĒJA → (atkārtot)
+// Secība: TAGAD SKAN(30s) → [MID](vidū) → TAGAD SKAN#2(90s pirms) → NĀKAMAIS(60s pirms) → TIKKO SKANĒJA(30s pirms) → crossfade(16s pirms)
 let ovTimers=[];
-let ovPhasesDone={now1:false,mid:false,now2:false,next:false,xfade:false};
-let previousVideo=null;
+let ovPhasesDone={now1:false,mid:false,now2:false,next:false,just:false,xfade:false};
 var overlayBusyUntil=0; // Date.now() kad pēdējais overlay būs beidzies
 const OV_MIN_GAP=5000; // 5s minimālā pauze starp overlay
 const OV_MIN_DUR=5; // 5s minimālais rādīšanas laiks
 function resetOverlayPhases(){
-  ovPhasesDone={now1:false,mid:false,now2:false,next:false,xfade:false};
+  ovPhasesDone={now1:false,mid:false,now2:false,next:false,just:false,xfade:false};
   ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];
   overlayBusyUntil=0;
   hideOverlay();hideMidOverlay();resetAgeBadge();
@@ -2511,11 +2280,11 @@ function safeShowOverlay(phase,videoData,desiredDur){
   const now=Date.now();
   const dur=Math.max(OV_MIN_DUR,desiredDur);
   if(now>=overlayBusyUntil){
-    showOverlay(phase,videoData,dur);
+    showOverlay(phase,videoData,dur);showAgeBadge(dur);
     overlayBusyUntil=now+dur*1000+OV_MIN_GAP;
   }else{
     const delay=overlayBusyUntil-now;
-    const t=setTimeout(()=>{showOverlay(phase,videoData,dur);overlayBusyUntil=Date.now()+dur*1000+OV_MIN_GAP},delay);
+    const t=setTimeout(()=>{showOverlay(phase,videoData,dur);showAgeBadge(dur);overlayBusyUntil=Date.now()+dur*1000+OV_MIN_GAP},delay);
     ovTimers.push(t);
   }
 }
@@ -2523,18 +2292,17 @@ function safeMidOverlay(desiredDur){
   const now=Date.now();
   const dur=Math.max(OV_MIN_DUR,desiredDur);
   if(now>=overlayBusyUntil){
-    showMidOverlay(dur);
+    showMidOverlay(dur);showAgeBadge(dur);
     overlayBusyUntil=now+dur*1000+OV_MIN_GAP;
   }else{
     const delay=overlayBusyUntil-now;
-    const t=setTimeout(()=>{showMidOverlay(dur);overlayBusyUntil=Date.now()+dur*1000+OV_MIN_GAP},delay);
+    const t=setTimeout(()=>{showMidOverlay(dur);showAgeBadge(dur);overlayBusyUntil=Date.now()+dur*1000+OV_MIN_GAP},delay);
     ovTimers.push(t);
   }
 }
 // ====== 30+ VECUMA BADGE ======
 var ageBadgeTimers=[];
-var ageBadgeShown={first:false,second:false,third:false};
-function resetAgeBadge(){ageBadgeShown={first:false,second:false,third:false};ageBadgeTimers.forEach(t=>clearTimeout(t));ageBadgeTimers=[];hideAgeBadge()}
+function resetAgeBadge(){ageBadgeTimers.forEach(t=>clearTimeout(t));ageBadgeTimers=[];hideAgeBadge()}
 function showAgeBadge(dur){const b=document.getElementById('tvAgeBadge');if(!b)return;b.classList.add('show');const t=setTimeout(()=>{b.classList.remove('show')},dur*1000);ageBadgeTimers.push(t)}
 function hideAgeBadge(){const b=document.getElementById('tvAgeBadge');if(b)b.classList.remove('show')}
 // ====== MID-SONG PROGRAM OVERLAY — Tagad / Nākošais / Vēlāk ======
@@ -2578,16 +2346,19 @@ function startProgressTracker(){
       const p=(c/effectiveEnd)*100+'%';document.getElementById('npProgressFill').style.width=p;
       const dimOv=document.getElementById('tvDimOverlay');
       // ═══ OVERLAY SECĪBA — 6 fāzes ar kolīziju aizsardzību ═══
+      // TAGAD SKAN(30s) → MID(vidū) → TAGAD SKAN#2(90s pirms) → NĀKAMAIS(60s pirms) → TIKKO SKANĒJA(30s pirms) → crossfade(16s pirms)
       const totalDur=effectiveEnd-(v.trimStart||6);
-      // 1) TAGAD SKAN #1 — ~20s pēc klipa sākuma
-      if(c>=20&&!ovPhasesDone.now1){ovPhasesDone.now1=true;safeShowOverlay('now',v,10)}
+      // 1) TAGAD SKAN #1 — ~30s pēc klipa sākuma
+      if(c>=30&&!ovPhasesDone.now1){ovPhasesDone.now1=true;safeShowOverlay('now',v,10)}
       // 2) MID-SONG PROGRAM — viduspunktā (tikai ja dziesma > 60s)
       const midPoint=effectiveEnd/2;
       if(totalDur>60&&c>=midPoint&&c<midPoint+15&&!ovPhasesDone.mid){ovPhasesDone.mid=true;safeMidOverlay(10)}
-      // 3) TAGAD SKAN #2 — ~60s pirms beigām (tikai ja dziesma > 120s)
-      if(totalDur>120&&remaining<=60&&remaining>45&&!ovPhasesDone.now2){ovPhasesDone.now2=true;safeShowOverlay('now',v,10)}
-      // 4) NĀKAMAIS — ~30s pirms beigām + preload
-      if(remaining<=30&&remaining>20&&!ovPhasesDone.next){ovPhasesDone.next=true;safeShowOverlay('next',getNextVideoInfo(),10);preloadNext()}
+      // 3) TAGAD SKAN #2 — ~90s pirms beigām (tikai ja dziesma > 120s)
+      if(totalDur>120&&remaining<=90&&remaining>75&&!ovPhasesDone.now2){ovPhasesDone.now2=true;safeShowOverlay('now',v,10)}
+      // 4) NĀKAMAIS — ~60s pirms beigām + preload
+      if(remaining<=60&&remaining>45&&!ovPhasesDone.next){ovPhasesDone.next=true;safeShowOverlay('next',getNextVideoInfo(),10);preloadNext()}
+      // 5) TIKKO SKANĒJA — ~30s pirms beigām (pašreizējā dziesma)
+      if(remaining<=30&&remaining>20&&!ovPhasesDone.just){ovPhasesDone.just=true;safeShowOverlay('just',v,10)}
       // ═══ CROSSFADE MEHĀNIKA: 21s → 16s → 11s ═══
       // 21s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
       if(remaining<=21&&remaining>16&&!crossfading&&!isMuted){
@@ -2600,13 +2371,9 @@ function startProgressTracker(){
       // Jaunais redzams un sāk skanēt klusām, vecais vēl skan bet paslēpts
       if(remaining<=16&&remaining>10&&!ovPhasesDone.xfade&&!crossfading){ovPhasesDone.xfade=true;nextVideo()}
       // 10s pirms beigām: No vecā nekas nav palicis (crossfadeTo jau pabeidza fade)
-      // ═══ 30+ BADGE — 3x per klipu ═══
-      // 1) ~35s no sākuma (pēc pirmā TAGAD SKAN, kas beidzas ~30s)
-      if(c>=35&&c<47&&!ageBadgeShown.first){ageBadgeShown.first=true;showAgeBadge(10)}
-      // 2) ~75s pirms beigām (pirms otrā TAGAD SKAN pie ~60s)
-      if(remaining<=80&&remaining>65&&!ageBadgeShown.second){ageBadgeShown.second=true;showAgeBadge(10)}
-      // 3) ~22s pirms beigām (starp NĀKAMAIS un crossfade dimming)
-      if(remaining<=25&&remaining>18&&!ageBadgeShown.third){ageBadgeShown.third=true;showAgeBadge(10)}
+      // ═══ 30+ BADGE — parādās VIENLAICĪGI ar katru info overlay (fade in/out) ═══
+      // Badge seko overlay fāzēm: TAGAD SKAN, MID, TAGAD SKAN#2, NĀKAMAIS, TIKKO SKANĒJA
+      // (showAgeBadge izsaukts no safeShowOverlay/safeMidOverlay — sk. zemāk)
     }catch(e){}
   },500);
 }
@@ -3471,7 +3238,7 @@ function submitContactForm(e){
   const status=document.getElementById('contactStatus');
   const data=Object.fromEntries(new FormData(form));
   btn.disabled=true;btn.textContent='SŪTA...';status.textContent='';
-  submitToSheets({type:'contact',...data,time:new Date().toISOString()}).then(()=>{
+  submitReport({type:'contact',...data,time:new Date().toISOString()}).then(()=>{
     status.textContent='Paldies! Ziņa nosūtīta.';status.style.color='#35ed7e';form.reset();
   }).catch(()=>{
     status.textContent='Kļūda. Mēģini vēlreiz.';status.style.color='#ff6b6b';
@@ -3486,7 +3253,7 @@ function submitInfoSuggestion(e){
   const song=document.getElementById('infoSuggestSong').value.trim();
   if(!song)return;
   btn.disabled=true;btn.textContent='SŪTA...';status.textContent='';
-  submitToSheets({type:'suggestion',suggestion:song,time:new Date().toISOString()}).then(()=>{
+  submitReport({type:'suggestion',suggestion:song,time:new Date().toISOString()}).then(()=>{
     status.textContent='Paldies par ieteikumu!';status.style.color='#35ed7e';
     document.getElementById('infoSuggestForm').reset();
   }).catch(()=>{
