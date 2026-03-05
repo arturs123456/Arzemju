@@ -2042,56 +2042,48 @@ function buildChannelGrid(){
 }
 buildChannelGrid();
 
-/* ═══ 3D perspective logo — lightweight mouse tracking (GPU-composited) ═══ */
+/* ═══ 3D perspective logo — rachsmith.com effect (GPU-composited) ═══ */
 (function(){
-  const logo=document.getElementById('logo3d');
-  if(!logo)return;
-  const copies=logo.getElementsByClassName('logo-copy');
-  const perspective=500,baseZ=-15,rotate=3,skew=2;
-  let mx=0,my=0,lx=0,ly=0,raf=0,active=true;
+  const container=document.getElementById('logo3d');
+  if(!container)return;
+  const copies=container.getElementsByClassName('logo-copy');
+  function newV2(x,y){return{x:x||0,y:y||0}}
+  function lerpV2(pos,target){pos.x+=(target.x-pos.x)*0.2;pos.y+=(target.y-pos.y)*0.2}
+  const mouse=newV2(),center=newV2(),distFromCenter=newV2(),distLerped=newV2();
+  let simulating=true,active=true,raf=0;
+  const perspective=500,translateZ=-12,rotate=3,skew=3;
   function updateCenter(){
-    const r=logo.getBoundingClientRect();
-    mx=r.left+r.width/2;my=r.top+r.height/2;
+    const r=container.getBoundingClientRect();
+    center.x=r.left+r.width/2;center.y=r.top+r.height/2;
   }
-  updateCenter();
-  let simT=0,simulating=true;
-  function fakeMove(){
-    simT+=0.01;
-    lx=Math.sin(simT*0.7)*0.2;ly=Math.cos(simT*0.5)*0.15;
-  }
-  function onMove(e){
+  function trackMouse(e){
     simulating=false;
-    const cx=e.clientX||e.touches?.[0]?.clientX||0;
-    const cy=e.clientY||e.touches?.[0]?.clientY||0;
-    const r=logo.getBoundingClientRect();
-    lx=(cx-(r.left+r.width/2))/(r.width/2);
-    ly=(cy-(r.top+r.height/2))/(r.height/2);
-    lx=Math.max(-1,Math.min(1,lx));ly=Math.max(-1,Math.min(1,ly));
+    mouse.x=e.clientX;mouse.y=e.clientY;
+    distFromCenter.x=center.x-mouse.x;distFromCenter.y=center.y-mouse.y;
   }
-  function tick(){
+  function fakeMouse(t){
+    distFromCenter.x=Math.sin(t/500)*window.innerWidth*0.5;
+    distFromCenter.y=Math.cos(t/500)*window.innerWidth*0.2;
+  }
+  function tick(t){
     if(!active)return;
-    if(simulating)fakeMove();
+    if(simulating)fakeMouse(t);
+    lerpV2(distLerped,distFromCenter);
     for(let i=0;i<copies.length;i++){
-      const d=(i+1);
-      const z=baseZ*d;
-      const rx=ly*rotate*d*0.5;
-      const ry=-lx*rotate*d*0.5;
-      const sx=lx*skew*d*0.3;
-      copies[i].style.transform=`perspective(${perspective}px) translate3d(${sx}px,0,${z}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      const d=i+1;
+      copies[i].style.transform=`perspective(${perspective}px) translate3d(0px,${d*distLerped.y*0.03}px,${d*translateZ}px) rotate(${d*rotate*(distLerped.x*0.003)}deg) skew(${d*skew*(distLerped.x*0.003)}deg)`;
     }
     raf=requestAnimationFrame(tick);
   }
-  document.addEventListener('mousemove',onMove,{passive:true});
-  document.addEventListener('touchmove',onMove,{passive:true});
+  updateCenter();
+  document.addEventListener('mousemove',trackMouse,{passive:true});
   window.addEventListener('resize',updateCenter,{passive:true});
   raf=requestAnimationFrame(tick);
-  /* Stop animation when TV starts (saves CPU during video playback) */
-  const obs=new MutationObserver(()=>{
-    const ss=document.getElementById('startScreen');
-    if(ss&&ss.classList.contains('hidden')){active=false;cancelAnimationFrame(raf);obs.disconnect()}
-  });
+  /* Stop when TV starts (saves CPU during video playback) */
   const ss=document.getElementById('startScreen');
-  if(ss)obs.observe(ss,{attributes:true,attributeFilter:['class']});
+  if(ss){const obs=new MutationObserver(()=>{
+    if(ss.classList.contains('hidden')){active=false;cancelAnimationFrame(raf);obs.disconnect()}
+  });obs.observe(ss,{attributes:true,attributeFilter:['class']})}
 })();
 
 function launchTV(){startTV()}
