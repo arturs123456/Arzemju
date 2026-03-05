@@ -1695,10 +1695,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
                   <span class="pair-btn-icon-text">☕</span>
                   <span class="pair-btn-text">CHILL</span>
                 </button>
-                <button class="power-pair-btn lat-btn" id="latBtn" onclick="toggleLat()">
-                  <span class="pair-btn-icon-text">🇱🇻</span>
-                  <span class="pair-btn-text">LAT</span>
-                </button>
               </div>
             </div>
             <div class="indicator-bars">
@@ -2607,38 +2603,6 @@ function togglePower(){
     }
   }
 }
-// LAT poga — CRT izslēgšanas efekts (pagaidām nav latviešu dziesmu)
-let latOff=false;
-function toggleLat(){
-  const off=document.getElementById('powerOff'),led=document.getElementById('ledPower'),bars=document.querySelectorAll('.indicator-bar');
-  const vhsOsd=document.getElementById('vhsOsd'),latBtn=document.getElementById('latBtn');
-  if(!latOff){
-    // Izslēgt — CRT off efekts
-    latOff=true;
-    try{if(playerAReady)playerA.pauseVideo()}catch(e){}
-    try{if(playerBReady)playerB.pauseVideo()}catch(e){}
-    off.classList.add('show');const d=off.querySelector('.power-dot');d.style.animation='none';d.offsetHeight;d.style.animation='';
-    bars.forEach((b,i)=>{if(i<3)b.classList.add('active');else b.classList.remove('active')});
-    if(vhsOsd)vhsOsd.style.display='none';
-    if(latBtn)latBtn.classList.add('active');
-    isPoweredOn=false;
-    const ledMq=document.getElementById('ledMarqueeWrap');if(ledMq)ledMq.classList.remove('on');
-  } else {
-    // Ieslēgt atpakaļ — static + atskaņot
-    latOff=false;
-    isPoweredOn=true;
-    off.classList.remove('show');bars.forEach(b=>b.classList.add('active'));
-    if(vhsOsd)vhsOsd.style.display='';
-    if(latBtn)latBtn.classList.remove('active');
-    led.classList.remove('off');
-    const ledMq=document.getElementById('ledMarqueeWrap');if(ledMq)ledMq.classList.add('on');
-    showStatic(()=>{
-      const ap=activeSlot==='a'?playerA:playerB;
-      if(playerReady&&ap)ap.playVideo();
-    });
-  }
-}
-// LAT pagaidām nav pieejams — bloķējam toggle pilnībā ar click preventDefault
 document.getElementById('powerToggleInput').addEventListener('click',function(e){e.preventDefault()});
 // CHILL poga — toggle spēli/lofi tieši
 document.getElementById('gamePanelBtn').addEventListener('click',function(){
