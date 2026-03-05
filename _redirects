@@ -1,11 +1,11 @@
-# Clean URL rewrites — kanālu slugi → index.html (SPA routing)
-/vecie      /index.html   200
-/jaunie     /index.html   200
-/pop        /index.html   200
-/poprock    /index.html   200
-/rock       /index.html   200
-/dance      /index.html   200
-/hiphop     /index.html   200
-/rap        /index.html   200
-/funk       /index.html   200
-/hipster    /index.html   200
+# Clean URL rewrites — /arzemju/[kanāls] → index.html (SPA routing)
+/arzemju/vecie      /arzemju/index.html   200
+/arzemju/jaunie     /arzemju/index.html   200
+/arzemju/pop        /arzemju/index.html   200
+/arzemju/poprock    /arzemju/index.html   200
+/arzemju/rock       /arzemju/index.html   200
+/arzemju/dance      /arzemju/index.html   200
+/arzemju/hiphop     /arzemju/index.html   200
+/arzemju/rap        /arzemju/index.html   200
+/arzemju/funk       /arzemju/index.html   200
+/arzemju/hipster    /arzemju/index.html   200

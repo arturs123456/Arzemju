@@ -2008,20 +2008,8 @@ let _urlFromCode=false;
 function updateURL(ch){
   const s=CHANNEL_SLUG_NAMES[ch]||'';
   if(!s)return;
-  // Izveido path: /arzemju/pop (vai /pop ja nav /arzemju/ prefiks)
-  const base=location.pathname.replace(/\/$/,'').split('/');
-  // Atrod "arzemju" pozīciju
-  const arzIdx=base.findIndex(p=>p.toLowerCase()==='arzemju');
-  let newPath;
-  if(arzIdx>=0){
-    // Aizstāj visu pēc "arzemju" ar jauno slug
-    newPath=base.slice(0,arzIdx+1).join('/')+'/'+s;
-  } else {
-    // Ja nav arzemju path, vienkārši /slug
-    newPath='/'+s;
-  }
   _urlFromCode=true;
-  history.pushState({channel:ch},'',(newPath||'/'+s));
+  history.pushState({channel:ch},'','/arzemju/'+s);
 }
 let currentChannel=getChannelFromURL(),currentVideoIdx={},isPoweredOn=true,player=null,playerReady=false,smsMessages=[],progressInterval=null,isMuted=false,currentVolume=80,volumeBeforeMute=80;
 let lastMusicChannel=null; // Pēdējais mūzikas kanāls (ne spēle) — lai ieslēdzot atgriežas
@@ -2109,7 +2097,7 @@ function buildChannelGrid(){
   grid.innerHTML='';
   channels.forEach((ch,i)=>{
     const cfg=CHANNEL_CONFIG.find(c=>c.name===ch.name)||{icon:'📺',name:ch.name};
-    const active=i===0?' active':'';
+    const active=i===currentChannel?' active':'';
     grid.innerHTML+=`<button class="ch-btn${active}" data-ch="${i}"><div class="ch-flipdisc"><div class="ch-face ch-face-front"><span class="ch-icon">${cfg.icon}</span><span class="ch-name">${ch.name}</span></div><div class="ch-face ch-face-back"><span class="ch-icon">${cfg.icon}</span><span class="ch-name">${ch.name}</span></div></div></button>`;
   });
 }
@@ -2198,9 +2186,7 @@ function startTV(){
       const _parts=location.pathname.replace(/\/$/,'').split('/');
       const _last=(_parts[_parts.length-1]||'').toLowerCase();
       if(!CHANNEL_SLUGS.hasOwnProperty(_last)||_last==='arzemju'){
-        const _base=_parts.findIndex(p=>p.toLowerCase()==='arzemju');
-        const _np=_base>=0?_parts.slice(0,_base+1).join('/')+'/'+_slug:'/'+_slug;
-        history.replaceState({channel:currentChannel},'',_np);
+        history.replaceState({channel:currentChannel},'','/arzemju/'+_slug);
       }
     }
     // Uzreiz sāk atskaņot — bez kalibrācijas joslām
