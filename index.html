@@ -96,7 +96,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .start-screen{transition:opacity 0.6s ease}
 .start-screen.fade-out{opacity:0;pointer-events:none}
 .start-screen.hidden{display:none}
-.start-age-gate{position:relative;z-index:10;margin-top:42px;text-align:center;max-width:320px;
+.start-age-gate{position:relative;z-index:10;margin-top:20px;text-align:center;max-width:320px;
   padding:12px 24px;border:2px solid rgba(255,159,67,0.5);border-radius:8px;
   background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);
   font-family:'Handjet',var(--font-main),sans-serif;font-size:20px;font-weight:700;
@@ -151,7 +151,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   28%{transform:translateY(-8px) translateZ(14px) rotateX(-4deg)}
   31%{transform:translateY(-2px) translateZ(4px) rotateX(-1deg)}}
 .logo-container{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  perspective:600px}
+  perspective:600px;margin-top:-30px}
 .logo-main{position:relative;display:flex;align-items:center;justify-content:center;
   transform-style:preserve-3d}
 
@@ -323,7 +323,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   50%{transform:translateY(-4px)}
 }
 /* ═══ JAFFA.tv logo — 3D perspective effect (GPU-composited transforms) ═══ */
-.logo-3d{display:block;position:relative;z-index:2;margin:0 auto;text-align:center;width:fit-content}
+.logo-3d{display:block;position:relative;z-index:2;margin:0 auto;text-align:center;width:fit-content;
+  transform:translateX(-25px)}
 .logo-3d .logo-copy{
   font-family:'Lilita One','Bowlby One SC',cursive;font-size:clamp(56px,18vw,150px);line-height:1;
   text-shadow:-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000;
