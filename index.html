@@ -293,7 +293,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 /* SCREEN OVERLAYS */
 @keyframes logoPulse{0%,100%{text-shadow:0 0 8px var(--neon-purple),0 0 16px rgba(155,77,255,0.4)}50%{text-shadow:0 0 14px var(--neon-purple),0 0 28px rgba(155,77,255,0.7)}}
 .screen-logo{position:absolute;top:8px;left:8px;z-index:10;display:flex;align-items:center;gap:3px;background:none;border:none;padding:12px 22px 12px 16px;border-radius:0;
-  animation:vhsRgbText 2s steps(9) infinite alternate,logoGlitch 8s infinite}
+  animation:logoFloat 3s ease-in-out infinite}
 /* TV Logo Glitch — retro TV traucējums */
 @keyframes logoGlitch{
   0%,4%,8%,100%{transform:none;opacity:1;filter:none}
@@ -303,35 +303,40 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   47%,47.5%{transform:translate(1px,0);filter:brightness(1.5)}
   48%{transform:none;filter:none}
 }
+@keyframes logoFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
 /* ═══ JAFFA.tv logo — 3D perspective effect (GPU-composited transforms) ═══ */
 .logo-3d{display:block;position:relative;z-index:2;margin:0 auto;text-align:center;width:fit-content}
-.logo-3d h1,.logo-3d .logo-copy{
+.logo-3d .logo-copy{
   font-family:'Lilita One','Bowlby One SC',cursive;font-size:clamp(48px,15vw,120px);line-height:1;
-  text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000;
+  text-shadow:-0.7px -0.7px 0 #000,0.7px -0.7px 0 #000,-0.7px 0.7px 0 #000,0.7px 0.7px 0 #000;
   display:block;margin:0;padding:0;
   letter-spacing:2px;white-space:nowrap}
 .logo-3d .logo-copy{position:absolute;top:0;left:0}
-.logo-3d h1{color:var(--neon-purple);z-index:50;
-  text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)}
-.logo-copy-1{transform:perspective(500px) translate3d(0,0,-15px);color:var(--hot-pink);z-index:40}
+.logo-copy-1{position:relative;z-index:50;color:var(--hot-pink);
+  text-shadow:-0.7px -0.7px 0 #000,0.7px -0.7px 0 #000,-0.7px 0.7px 0 #000,0.7px 0.7px 0 #000,0 0 20px var(--hot-pink),0 0 40px rgba(255,0,110,0.4)}
+.logo-copy-1b{transform:perspective(500px) translate3d(0,0,-15px);color:var(--neon-purple);z-index:40}
 .logo-copy-2{transform:perspective(500px) translate3d(0,0,-30px);color:var(--electric-blue);z-index:30}
 .logo-copy-3{transform:perspective(500px) translate3d(0,0,-45px);color:var(--neon-green);z-index:20}
 /* ═══ .tv — static neon glow (no continuous animation) ═══ */
-.logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:clamp(38px,6vw,58px);font-weight:400;color:#d9fdff;letter-spacing:2px;
-  position:absolute;top:0;right:-0.3em;z-index:51;
+.logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:clamp(49px,7.8vw,75px);font-weight:400;color:#d9fdff;letter-spacing:2px;
+  position:absolute;top:calc(-0.15em + 3px);right:calc(-0.2em - 18px);z-index:51;
   display:inline-block;transform:rotate(-10deg);
   text-shadow:0 0 7px #00f0ff,0 0 15px #00f0ff,0 0 30px rgba(0,115,255,0.5)}
 /* ═══ JAFFA.tv logo — ekrāna augšā pa kreisi ═══ */
-.screen-logo-jaffa{font-family:'Bowlby One SC',sans-serif;font-size:30px;font-weight:400;letter-spacing:2px;line-height:1;text-transform:uppercase;
-  color:var(--neon-purple);text-shadow:0 0 6px var(--neon-purple)}
-.screen-logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:15px;font-weight:400;color:var(--electric-blue);letter-spacing:1px;
-  text-shadow:0 0 8px rgba(25,208,232,0.7);transform:rotate(-6deg);display:inline-block;margin-left:1px;position:relative;top:2px}
+.screen-logo-jaffa{font-family:'Lilita One','Bowlby One SC',cursive;font-size:30px;font-weight:400;letter-spacing:2px;line-height:1;
+  color:var(--neon-purple);text-shadow:-0.7px -0.7px 0 #000,0.7px -0.7px 0 #000,-0.7px 0.7px 0 #000,0.7px 0.7px 0 #000,0 0 8px var(--neon-purple),0 0 18px rgba(155,77,255,0.3);
+  animation:vhsRgbText 2s steps(9) infinite alternate,logoGlitch 8s infinite}
+.screen-logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:19px;font-weight:400;color:#d9fdff;letter-spacing:1px;
+  text-shadow:0 0 7px #00f0ff,0 0 15px #00f0ff;transform:rotate(-8deg);display:inline-block;margin-left:1px;position:relative;top:0px}
 .ch-switch-overlay{position:absolute;top:13px;right:14px;z-index:15;font-family:'Press Start 2P',monospace;font-size:20px;font-weight:400;color:#fff;
   text-shadow:0 0 10px rgba(255,255,255,0.5);opacity:0;transition:opacity .15s;background:rgba(0,0,0,0.65);padding:6px 16px;border:none;border-radius:4px;letter-spacing:2px;
   animation:vhsRgbText 1.5s steps(9) infinite alternate}
 .ch-switch-overlay.show{opacity:1}
 /* LIVE badge + report button — labajā augšā */
-.tv-live-strip{position:absolute;top:2px;right:16px;z-index:15;display:flex;align-items:center;gap:8px;pointer-events:auto;
+.tv-live-strip{position:absolute;top:14px;right:16px;z-index:15;display:flex;align-items:center;gap:8px;pointer-events:auto;
   animation:vhsRgbText 2.5s steps(9) infinite alternate}
 .tv-live-badge{display:flex;align-items:center;gap:5px;font-family:'Press Start 2P',monospace;font-size:clamp(7px,1vw,12px);color:#fff;
   background:none;padding:5px 10px;border-radius:4px;letter-spacing:1px;white-space:nowrap}
@@ -1125,8 +1130,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   /* Logo uz ekrāna */
   .screen-logo{top:4px;left:6px;padding:2px 6px;gap:1px}
   .screen-logo-jaffa{font-size:16px}
-  .screen-logo-dot-tv{font-size:8px}
-  .screen-logo-jaffa{text-shadow:none}
+  .screen-logo-dot-tv{font-size:10px}
+  .screen-logo-jaffa{text-shadow:-0.5px -0.5px 0 #000,0.5px -0.5px 0 #000,-0.5px 0.5px 0 #000,0.5px 0.5px 0 #000,0 0 6px var(--neon-purple)}
   /* Indicator bars kompaktāki */
   .indicator-bars{padding-right:4px}
   .indicator-bar{width:3px;height:12px}
@@ -1160,8 +1165,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   .panel-bottom-zone{padding:2px 0}
   /* Logo */
   .screen-logo{top:2px;left:4px;padding:2px 4px;gap:0}
-  .screen-logo-jaffa{font-size:12px}
-  .screen-logo-dot-tv{font-size:6px}
+  .screen-logo-jaffa{font-size:12px;text-shadow:-0.4px -0.4px 0 #000,0.4px -0.4px 0 #000,-0.4px 0.4px 0 #000,0.4px 0.4px 0 #000,0 0 4px var(--neon-purple)}
+  .screen-logo-dot-tv{font-size:8px}
 }
 
 /* "PAGRIEZ TELEFONU" OVERLAY — tikai portrait mobilajā */
@@ -1481,8 +1486,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   <div class="logo-container">
     <div class="logo-main">
       <div class="logo-3d" id="logo3d">
-        <h1>JAFFA</h1>
-        <span aria-hidden="true" class="logo-copy logo-copy-1">JAFFA</span>
+        <span class="logo-copy logo-copy-1">JAFFA</span>
+        <span aria-hidden="true" class="logo-copy logo-copy-1b">JAFFA</span>
         <span aria-hidden="true" class="logo-copy logo-copy-2">JAFFA</span>
         <span aria-hidden="true" class="logo-copy logo-copy-3">JAFFA</span>
         <span class="logo-dot-tv">.tv</span>
@@ -2047,9 +2052,9 @@ function buildChannelGrid(){
 }
 buildChannelGrid();
 
-/* ═══ JAFFA logo — randomizēt krāsu secību katram apmeklējumam ═══ */
+/* ═══ JAFFA logo — randomizēt krāsu secību katram apmeklējumam (4 slāņi) ═══ */
 (function(){
-  const colors=['var(--neon-purple)','var(--hot-pink)','var(--electric-blue)','var(--neon-green)'];
+  const colors=['var(--hot-pink)','var(--neon-purple)','var(--electric-blue)','var(--neon-green)'];
   for(let i=colors.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[colors[i],colors[j]]=[colors[j],colors[i]]}
   const glows={
     'var(--neon-purple)':'0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)',
@@ -2057,10 +2062,13 @@ buildChannelGrid();
     'var(--electric-blue)':'0 0 20px var(--electric-blue),0 0 40px rgba(25,208,232,0.4)',
     'var(--neon-green)':'0 0 20px var(--neon-green),0 0 40px rgba(53,237,126,0.4)'
   };
-  const h1=document.querySelector('.logo-3d h1');
-  if(h1){h1.style.color=colors[0];h1.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,'+(glows[colors[0]]||'')}
   const copies=document.querySelectorAll('.logo-3d .logo-copy');
-  copies.forEach((c,i)=>{if(colors[i+1])c.style.color=colors[i+1]});
+  copies.forEach((c,i)=>{
+    if(colors[i]){
+      c.style.color=colors[i];
+      if(i===0) c.style.textShadow='-0.7px -0.7px 0 #000,0.7px -0.7px 0 #000,-0.7px 0.7px 0 #000,0.7px 0.7px 0 #000,'+(glows[colors[i]]||'');
+    }
+  });
 })();
 /* ═══ 3D perspective logo — rachsmith.com effect (GPU-composited) ═══ */
 (function(){
@@ -2576,6 +2584,7 @@ document.getElementById('gamePanelBtn').addEventListener('click',function(){
   }else{
     // Ieslēgt spēli
     lastMusicChannel=currentChannel;
+    document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));
     this.classList.add('active');
     showStatic(()=>{startGame()});
   }
