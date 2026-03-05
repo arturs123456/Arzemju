@@ -1987,20 +1987,42 @@ let channels=FALLBACK_CHANNELS;
 let cmsLoaded=false;
 
 // ═══ URL HASH ROUTING ═══
-// jaffa.tv/arzemju/#pop → atver Pop/Rock kanālu
+// ═══ CLEAN URL ROUTING ═══
+// jaffa.tv/arzemju/pop → atver Pop/Rock kanālu
 const CHANNEL_SLUGS={vecie:0,jaunie:1,pop:2,poprock:2,rock:2,dance:3,hiphop:4,rap:4,funk:4,hipster:5};
-function getChannelFromHash(){
+const CHANNEL_SLUG_NAMES=['vecie','jaunie','pop','dance','hiphop','hipster'];
+// Nolasa kanālu no URL path (pēdējais segments) vai hash (fallback)
+function getChannelFromURL(){
+  // 1) Vispirms mēģinam pathname: /arzemju/pop → "pop"
+  const parts=location.pathname.replace(/\/$/,'').split('/');
+  const last=(parts[parts.length-1]||'').toLowerCase();
+  if(last&&last!=='arzemju'&&CHANNEL_SLUGS.hasOwnProperty(last))return CHANNEL_SLUGS[last];
+  // 2) Fallback uz hash: #pop
   const h=location.hash.replace('#','').toLowerCase().trim();
   if(h&&CHANNEL_SLUGS.hasOwnProperty(h))return CHANNEL_SLUGS[h];
+  // 3) Random
   return Math.floor(Math.random()*6);
 }
-let _hashFromCode=false; // novērš hashchange → switchChannel ciklu
-function updateHash(ch){
-  const slugs=['vecie','jaunie','pop','dance','hiphop','hipster'];
-  const s=slugs[ch]||'';
-  if(s){_hashFromCode=true;location.hash=s}
+let _urlFromCode=false;
+function updateURL(ch){
+  const s=CHANNEL_SLUG_NAMES[ch]||'';
+  if(!s)return;
+  // Izveido path: /arzemju/pop (vai /pop ja nav /arzemju/ prefiks)
+  const base=location.pathname.replace(/\/$/,'').split('/');
+  // Atrod "arzemju" pozīciju
+  const arzIdx=base.findIndex(p=>p.toLowerCase()==='arzemju');
+  let newPath;
+  if(arzIdx>=0){
+    // Aizstāj visu pēc "arzemju" ar jauno slug
+    newPath=base.slice(0,arzIdx+1).join('/')+'/'+s;
+  } else {
+    // Ja nav arzemju path, vienkārši /slug
+    newPath='/'+s;
+  }
+  _urlFromCode=true;
+  history.pushState({channel:ch},'',(newPath||'/'+s));
 }
-let currentChannel=getChannelFromHash(),currentVideoIdx={},isPoweredOn=true,player=null,playerReady=false,smsMessages=[],progressInterval=null,isMuted=false,currentVolume=80,volumeBeforeMute=80;
+let currentChannel=getChannelFromURL(),currentVideoIdx={},isPoweredOn=true,player=null,playerReady=false,smsMessages=[],progressInterval=null,isMuted=false,currentVolume=80,volumeBeforeMute=80;
 let lastMusicChannel=null; // Pēdējais mūzikas kanāls (ne spēle) — lai ieslēdzot atgriežas
 // Dual-player crossfade sistēma
 let playerA=null,playerB=null,playerAReady=false,playerBReady=false;
@@ -2169,6 +2191,17 @@ function startTV(){
     document.getElementById('powerToggleInput').checked=true;
     document.getElementById('ledPower').classList.remove('off');
     document.querySelectorAll('.indicator-bar').forEach(b=>b.classList.add('active'));
+    // Ja URL vēl nenorāda uz kanālu, atjaunojam ar replaceState (neveido history ierakstu)
+    const _slug=CHANNEL_SLUG_NAMES[currentChannel];
+    if(_slug){
+      const _parts=location.pathname.replace(/\/$/,'').split('/');
+      const _last=(_parts[_parts.length-1]||'').toLowerCase();
+      if(!CHANNEL_SLUGS.hasOwnProperty(_last)||_last==='arzemju'){
+        const _base=_parts.findIndex(p=>p.toLowerCase()==='arzemju');
+        const _np=_base>=0?_parts.slice(0,_base+1).join('/')+'/'+_slug:'/'+_slug;
+        history.replaceState({channel:currentChannel},'',_np);
+      }
+    }
     // Uzreiz sāk atskaņot — bez kalibrācijas joslām
     initYTPlayer();try{initSMS()}catch(e){setTimeout(initSMS,1500)};startProgressTracker();
     // VHS OSD — laika atjaunošana katru sekundi
@@ -2181,6 +2214,12 @@ loadFromSupabase('arzemju').then(loaded=>{
   if(loaded){
     syncAllChannels();
     buildChannelGrid();
+  }
+  // Parāda kanāla nosaukumu start ekrānā ja URL norāda konkrētu kanālu
+  const lbl=document.querySelector('.start-btn-label');
+  if(lbl&&channels[currentChannel]){
+    const cfg=CHANNEL_CONFIG[currentChannel];
+    if(cfg)lbl.textContent=(cfg.icon||'')+' '+cfg.name;
   }
 });
 // TV startē tikai ar pogu klikšķi (nodrošina autoplay ar skaņu)
@@ -2545,7 +2584,7 @@ function switchChannel(ch){
   if(gameRunning){stopGame();const gb=document.getElementById('gamePanelBtn');if(gb)gb.classList.remove('active')}
   currentChannel=ch;
   lastMusicChannel=ch; // Atceries pēdējo mūzikas kanālu
-  updateHash(ch); // URL hash atjaunināšana
+  updateURL(ch); // URL atjaunināšana
   applyChannelStyle(ch); // Kanāla vizuālais stils (VHS/clean/LOMO)
   document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));
   const newBtn=document.querySelector('#channelGrid .ch-btn[data-ch="'+ch+'"]');if(newBtn)newBtn.classList.add('active');
@@ -2560,11 +2599,12 @@ function switchChannel(ch){
     playVideoLive(v,live.seekTo);
   });
 }
-// Hash change (back/forward navigācija)
-window.addEventListener('hashchange',()=>{
-  if(_hashFromCode){_hashFromCode=false;return} // ignorēt programmatiskos hash maiņus
-  const h=location.hash.replace('#','').toLowerCase().trim();
-  if(h&&CHANNEL_SLUGS.hasOwnProperty(h)){const ch=CHANNEL_SLUGS[h];if(ch!==currentChannel&&isPoweredOn)switchChannel(ch)}
+// Back/forward navigācija (popstate no history.pushState)
+window.addEventListener('popstate',(e)=>{
+  if(_urlFromCode){_urlFromCode=false;return}
+  // Nolasām kanālu no jaunā URL
+  const ch=getChannelFromURL();
+  if(ch!==currentChannel&&isPoweredOn)switchChannel(ch);
 });
 function changeChannel(dir){
   let n=currentChannel+dir;
