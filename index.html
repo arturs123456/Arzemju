@@ -2255,6 +2255,11 @@ function playVideoLive(v,seekTo){
   // Bez crossfade, ar seekTo uz pseudo-live pozīciju
   if(!playerReady)return;
   crossfading=false;clearInterval(crossfadeTimer);preloadedVideoId=null;
+  // Apstādināt OTRU playeri lai nepaliek skaņa no iepriekšējā kanāla/dziesmas
+  const otherPlayer=activeSlot==='a'?playerB:playerA;
+  try{otherPlayer.pauseVideo();otherPlayer.setVolume(0)}catch(e){}
+  const otherEl=document.getElementById('yt-slot-'+(activeSlot==='a'?'b':'a'));
+  if(otherEl)otherEl.classList.add('yt-hidden');
   const trimE=v.trimEnd||11,dur=v.duration||0;
   const opts={videoId:v.id,startSeconds:seekTo};
   if(dur>trimE)opts.endSeconds=dur-trimE;
@@ -2262,6 +2267,8 @@ function playVideoLive(v,seekTo){
   currPlayer.loadVideoById(opts);
   const vol=isMuted?0:currentVolume;
   try{currPlayer.setVolume(vol)}catch(e){}
+  const currEl=document.getElementById('yt-slot-'+activeSlot);
+  if(currEl)currEl.classList.remove('yt-hidden');
   updateNowPlaying();resetOverlayPhases();
   startWatchdog(v.id);
 }
@@ -2269,6 +2276,11 @@ function playVideoHard(v){
   // Bez crossfade — tūlītēja pārslēgšana (kanāla maiņa ar static)
   if(!playerReady)return;
   crossfading=false;clearInterval(crossfadeTimer);preloadedVideoId=null;
+  // Apstādināt OTRU playeri lai nepaliek skaņa no iepriekšējā kanāla/dziesmas
+  const otherPlayer=activeSlot==='a'?playerB:playerA;
+  try{otherPlayer.pauseVideo();otherPlayer.setVolume(0)}catch(e){}
+  const otherEl=document.getElementById('yt-slot-'+(activeSlot==='a'?'b':'a'));
+  if(otherEl)otherEl.classList.add('yt-hidden');
   const trimS=v.trimStart||6,trimE=v.trimEnd||11,dur=v.duration||0;
   const opts={videoId:v.id,startSeconds:trimS};
   if(dur>trimE)opts.endSeconds=dur-trimE;
@@ -2276,6 +2288,8 @@ function playVideoHard(v){
   currPlayer.loadVideoById(opts);
   const vol=isMuted?0:currentVolume;
   try{currPlayer.setVolume(vol)}catch(e){}
+  const currEl=document.getElementById('yt-slot-'+activeSlot);
+  if(currEl)currEl.classList.remove('yt-hidden');
   updateNowPlaying();resetOverlayPhases();
   startWatchdog(v.id);
 }
@@ -2459,7 +2473,8 @@ function switchChannel(ch){
   if(gameRunning){stopGame();const gb=document.getElementById('gamePanelBtn');if(gb)gb.classList.remove('active')}
   currentChannel=ch;
   lastMusicChannel=ch; // Atceries pēdējo mūzikas kanālu
-  document.querySelectorAll('#channelGrid .ch-btn').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.ch)===ch));
+  document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));
+  const newBtn=document.querySelector('#channelGrid .ch-btn[data-ch="'+ch+'"]');if(newBtn)newBtn.classList.add('active');
   const ov=document.getElementById('chOverlay');ov.textContent='KAN '+(ch+1);ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),1500);
   // VHS OSD — atjaunināt kanāla nosaukumu
   const osdCh=document.getElementById('vhsOsdCh');if(osdCh)osdCh.textContent='▶ '+channels[ch].name;
