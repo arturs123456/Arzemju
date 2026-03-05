@@ -3164,6 +3164,7 @@ document.addEventListener('keydown',(e)=>{
     if(e.key==='ArrowLeft'){e.preventDefault();changeVolume(-5)}if(e.key==='ArrowRight'){e.preventDefault();changeVolume(5)}
   }
   if(e.key==='n'||e.key==='N')nextVideo();if(e.key==='Escape'&&document.fullscreenElement)document.exitFullscreen();
+  if(e.key===' '){e.preventDefault();toggleMute()}
 });
 function setChatEnabled(on){
   const ticker=document.querySelector('.sms-ticker-screen');if(ticker)ticker.classList.toggle('off',!on);
