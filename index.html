@@ -903,6 +903,42 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15),0 0 20px rgba(25,208,232,0.2)}
 .util-btns-bottom .wood-btn:active{transform:translateY(2px);box-shadow:inset 0 2px 4px rgba(0,0,0,0.5)}
 
+/* ADMIN MODERĀCIJA */
+.admin-mod-trigger{background:none;border:none;cursor:pointer;font-size:16px;opacity:0.3;transition:opacity 0.2s;padding:4px 8px;color:#888}
+.admin-mod-trigger:hover{opacity:0.7}
+.admin-mod-trigger.logged-in{opacity:1;color:#f59e0b}
+.admin-login-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center}
+.admin-login-overlay.show{display:flex}
+.admin-login-box{background:#1a1a2e;border:1px solid rgba(88,101,242,0.3);border-radius:12px;padding:24px;width:300px;max-width:90vw}
+.admin-login-box h3{color:#e0e3ff;font-size:16px;margin:0 0 16px;text-align:center}
+.admin-login-box input{width:100%;background:rgba(0,0,0,0.5);border:1px solid rgba(88,101,242,0.25);border-radius:6px;color:#e0e3ff;padding:10px;margin-bottom:10px;font-size:14px;outline:none;box-sizing:border-box}
+.admin-login-box input:focus{border-color:var(--blurple)}
+.admin-login-box .admin-login-btns{display:flex;gap:8px;margin-top:4px}
+.admin-login-box button{flex:1;padding:10px;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer}
+.admin-login-box .admin-login-go{background:var(--blurple);color:#fff}
+.admin-login-box .admin-login-cancel{background:rgba(255,255,255,0.1);color:#aaa}
+.admin-login-box .admin-login-err{color:#f87171;font-size:12px;text-align:center;margin-top:8px;min-height:18px}
+.admin-mod-panel{display:none;position:fixed;right:0;top:0;bottom:0;width:340px;max-width:90vw;background:#0d0d1a;border-left:1px solid rgba(88,101,242,0.2);z-index:9998;flex-direction:column;overflow:hidden;box-shadow:-4px 0 20px rgba(0,0,0,0.5)}
+.admin-mod-panel.show{display:flex}
+.admin-mod-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(88,101,242,0.15);flex-shrink:0}
+.admin-mod-header h3{color:#e0e3ff;font-size:14px;margin:0;font-weight:600}
+.admin-mod-header button{background:none;border:none;color:#888;cursor:pointer;font-size:18px;padding:4px}
+.admin-mod-header button:hover{color:#fff}
+.admin-mod-list{flex:1;overflow-y:auto;padding:8px}
+.admin-mod-msg{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:8px;margin-bottom:4px;background:rgba(255,255,255,0.03);transition:background 0.15s}
+.admin-mod-msg:hover{background:rgba(255,255,255,0.07)}
+.admin-mod-msg-content{flex:1;min-width:0}
+.admin-mod-msg-name{font-size:12px;font-weight:600;color:var(--neon-purple)}
+.admin-mod-msg-text{font-size:13px;color:rgba(230,235,255,0.8);word-wrap:break-word;margin-top:2px}
+.admin-mod-msg-time{font-size:10px;color:#555;margin-top:2px}
+.admin-mod-msg-del{background:none;border:none;color:#555;cursor:pointer;font-size:14px;padding:4px 6px;border-radius:4px;flex-shrink:0;transition:color 0.15s}
+.admin-mod-msg-del:hover{color:#f87171}
+.admin-mod-empty{color:#555;text-align:center;padding:40px 16px;font-size:13px}
+.admin-mod-stats{padding:8px 16px;border-top:1px solid rgba(88,101,242,0.15);flex-shrink:0;display:flex;gap:12px;font-size:11px;color:#666}
+.admin-mod-stats span{color:#999}
+.admin-mod-logout{background:none;border:none;color:#f87171;cursor:pointer;font-size:11px;margin-left:auto;padding:2px 6px}
+.admin-mod-logout:hover{color:#fca5a5}
+
 /* SMS */
 .sms-panel{background:linear-gradient(180deg,rgba(255,255,255,0.025) 0%,rgba(0,0,0,0.15) 100%),#151515;border-radius:10px;border:1px solid rgba(255,255,255,0.08);padding:10px 12px;display:flex;gap:8px;flex-direction:column;flex-shrink:0;
   box-shadow:inset 0 3px 8px rgba(0,0,0,0.7),inset 0 -1px 2px rgba(255,255,255,0.04),inset 2px 0 6px rgba(0,0,0,0.4),inset -2px 0 6px rgba(0,0,0,0.4)}
@@ -1758,6 +1794,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
         <div class="util-btns-bottom" style="flex-direction:row;gap:6px">
           <button class="wood-btn" onclick="shareApp()" style="flex:1;min-width:0"><span>📤</span> Iesaki</button>
           <button class="wood-btn" onclick="pwaInstallNative()" style="flex:1;min-width:0"><span>📲</span> App</button>
+          <button class="admin-mod-trigger" id="adminModTrigger" onclick="adminTriggerClick()" title="Admin">🔒</button>
         </div>
       </div>
     </div>
@@ -3976,6 +4013,198 @@ function showPwaInstructions(){
   }
   steps.innerHTML=html;
 }
+</script>
+
+<!-- ADMIN LOGIN MODĀLIS -->
+<div class="admin-login-overlay" id="adminLoginOverlay" onclick="if(event.target===this)closeAdminLogin()">
+  <div class="admin-login-box">
+    <h3>🔒 Admin pieslēgšanās</h3>
+    <input type="email" id="adminEmail" placeholder="E-pasts" autocomplete="email">
+    <input type="password" id="adminPassword" placeholder="Parole" autocomplete="current-password">
+    <div class="admin-login-btns">
+      <button class="admin-login-cancel" onclick="closeAdminLogin()">Atcelt</button>
+      <button class="admin-login-go" onclick="adminLogin()">Ieiet</button>
+    </div>
+    <div class="admin-login-err" id="adminLoginErr"></div>
+  </div>
+</div>
+
+<!-- ADMIN MODERĀCIJAS PANELIS -->
+<div class="admin-mod-panel" id="adminModPanel">
+  <div class="admin-mod-header">
+    <h3>💬 Čata moderācija</h3>
+    <button onclick="toggleModPanel()">✕</button>
+  </div>
+  <div class="admin-mod-list" id="adminModList">
+    <div class="admin-mod-empty">Ielādē...</div>
+  </div>
+  <div class="admin-mod-stats" id="adminModStats">
+    <div>Kopā: <span id="modStatTotal">0</span></div>
+    <div>Šodien: <span id="modStatToday">0</span></div>
+    <button class="admin-mod-logout" onclick="adminLogout()">Iziet</button>
+  </div>
+</div>
+
+<script>
+// ═══ ADMIN INLINE MODERĀCIJA ═══
+var adminSession=null;
+var modMessages=[];
+var modChannel=null;
+
+// Pārbaudīt sesiju ielādē
+(async function checkAdminSession(){
+  try{
+    const{data}=await _sb.auth.getSession();
+    if(data&&data.session){
+      adminSession=data.session;
+      onAdminLogin();
+    }
+  }catch(e){}
+})();
+
+function adminTriggerClick(){
+  if(adminSession){
+    toggleModPanel();
+  }else{
+    showAdminLogin();
+  }
+}
+
+function showAdminLogin(){
+  document.getElementById('adminLoginOverlay').classList.add('show');
+  document.getElementById('adminLoginErr').textContent='';
+  document.getElementById('adminEmail').value='';
+  document.getElementById('adminPassword').value='';
+  setTimeout(function(){document.getElementById('adminEmail').focus()},100);
+}
+
+function closeAdminLogin(){
+  document.getElementById('adminLoginOverlay').classList.remove('show');
+}
+
+async function adminLogin(){
+  var email=document.getElementById('adminEmail').value.trim();
+  var pass=document.getElementById('adminPassword').value;
+  if(!email||!pass){document.getElementById('adminLoginErr').textContent='Aizpildi abus laukus';return}
+  document.getElementById('adminLoginErr').textContent='Ielogojas...';
+  try{
+    const{data,error}=await _sb.auth.signInWithPassword({email:email,password:pass});
+    if(error){document.getElementById('adminLoginErr').textContent=error.message;return}
+    adminSession=data.session;
+    closeAdminLogin();
+    onAdminLogin();
+  }catch(e){document.getElementById('adminLoginErr').textContent='Kļūda: '+e.message}
+}
+
+function onAdminLogin(){
+  var btn=document.getElementById('adminModTrigger');
+  btn.classList.add('logged-in');
+  btn.textContent='🛡️';
+  btn.title='Čata moderācija';
+  loadModMessages();
+  subscribeModMessages();
+}
+
+async function adminLogout(){
+  try{await _sb.auth.signOut()}catch(e){}
+  adminSession=null;
+  var btn=document.getElementById('adminModTrigger');
+  btn.classList.remove('logged-in');
+  btn.textContent='🔒';
+  btn.title='Admin';
+  document.getElementById('adminModPanel').classList.remove('show');
+  if(modChannel){_sb.removeChannel(modChannel);modChannel=null}
+}
+
+function toggleModPanel(){
+  var panel=document.getElementById('adminModPanel');
+  panel.classList.toggle('show');
+  if(panel.classList.contains('show'))loadModMessages();
+}
+
+async function loadModMessages(){
+  try{
+    const{data}=await _sb.from('chat_messages')
+      .select('*')
+      .order('created_at',{ascending:false})
+      .limit(100);
+    modMessages=data||[];
+    renderModList();
+  }catch(e){console.warn('loadModMessages:',e)}
+}
+
+function subscribeModMessages(){
+  if(modChannel)return;
+  modChannel=_sb.channel('admin-mod-live')
+    .on('postgres_changes',{event:'*',schema:'public',table:'chat_messages'},function(){
+      loadModMessages();
+    })
+    .subscribe();
+}
+
+function renderModList(){
+  var list=document.getElementById('adminModList');
+  if(!modMessages||modMessages.length===0){
+    list.innerHTML='<div class="admin-mod-empty">Nav nevienas ziņas</div>';
+    updateModStats();
+    return;
+  }
+  list.textContent='';
+  modMessages.forEach(function(m){
+    var row=document.createElement('div');row.className='admin-mod-msg';
+    if(m.status==='rejected')row.style.opacity='0.4';
+
+    var content=document.createElement('div');content.className='admin-mod-msg-content';
+    var name=document.createElement('div');name.className='admin-mod-msg-name';name.textContent=m.name;
+    var text=document.createElement('div');text.className='admin-mod-msg-text';text.textContent=m.text;
+    var time=document.createElement('div');time.className='admin-mod-msg-time';
+    var ago=modTimeAgo(m.created_at);
+    var statusTxt=m.status==='approved'?'✓':'('+m.status+')';
+    time.textContent=ago+' · '+statusTxt;
+    content.appendChild(name);content.appendChild(text);content.appendChild(time);
+
+    var del=document.createElement('button');del.className='admin-mod-msg-del';del.textContent='✕';del.title='Dzēst';
+    del.onclick=function(){adminDeleteMsg(m.id)};
+
+    row.appendChild(content);row.appendChild(del);
+    list.appendChild(row);
+  });
+  updateModStats();
+}
+
+function updateModStats(){
+  var total=modMessages.length;
+  var today=new Date();today.setHours(0,0,0,0);
+  var todayCount=modMessages.filter(function(m){return new Date(m.created_at)>=today}).length;
+  var te=document.getElementById('modStatTotal');if(te)te.textContent=total;
+  var td=document.getElementById('modStatToday');if(td)td.textContent=todayCount;
+}
+
+async function adminDeleteMsg(id){
+  if(!confirm('Dzēst šo ziņu?'))return;
+  try{
+    await _sb.from('chat_messages').delete().eq('id',id);
+    modMessages=modMessages.filter(function(m){return m.id!==id});
+    // Noņemt arī no ticker
+    supabaseChatMessages=supabaseChatMessages.filter(function(m){return m._key!==id});
+    rebuildSmsMessages();
+    renderModList();
+  }catch(e){console.warn('adminDeleteMsg:',e)}
+}
+
+function modTimeAgo(dateStr){
+  var diff=Date.now()-new Date(dateStr).getTime();
+  var mins=Math.floor(diff/60000);
+  if(mins<1)return'tikko';
+  if(mins<60)return mins+'min';
+  var hrs=Math.floor(mins/60);
+  if(hrs<24)return hrs+'h';
+  return Math.floor(hrs/24)+'d';
+}
+
+// Enter taustiņš login formā
+document.getElementById('adminPassword').addEventListener('keydown',function(e){if(e.key==='Enter')adminLogin()});
+document.getElementById('adminEmail').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('adminPassword').focus()});
 </script>
 </body>
 </html>
