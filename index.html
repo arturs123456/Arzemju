@@ -466,6 +466,15 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .tv-overlay-artist{font-family:'Russo One',var(--font-display),sans-serif;font-size:22px;font-weight:400;color:rgba(200,210,240,0.75);
   white-space:normal;word-wrap:break-word;font-style:normal;letter-spacing:0.3px}
 .tv-overlay-meta{font-family:'Handjet',var(--font-main),sans-serif;font-size:18px;font-weight:500;color:rgba(224,227,255,0.5);letter-spacing:3px;margin-top:4px}
+/* 30+ vecuma brīdinājums — retro TV stilā */
+.tv-age-badge{position:absolute;bottom:100px;right:20px;z-index:15;pointer-events:none;
+  transform:translateX(150%);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s ease}
+.tv-age-badge.show{transform:translateX(0);opacity:1}
+.tv-age-badge-inner{font-family:'Press Start 2P',monospace;font-size:clamp(14px,2vw,22px);color:#fff;
+  letter-spacing:2px;line-height:1;
+  text-shadow:0 0 8px rgba(255,255,255,0.5),0 0 20px rgba(255,60,60,0.3),2px 2px 0 rgba(0,0,0,0.8);
+  animation:ageBadgePulse 2s ease-in-out infinite alternate}
+@keyframes ageBadgePulse{0%{opacity:0.75;text-shadow:0 0 8px rgba(255,255,255,0.3),2px 2px 0 rgba(0,0,0,0.8)}100%{opacity:1;text-shadow:0 0 12px rgba(255,255,255,0.6),0 0 25px rgba(255,60,60,0.35),2px 2px 0 rgba(0,0,0,0.8)}}
 .screen-progress{position:absolute;bottom:28px;left:0;right:0;z-index:10;height:3px;background:rgba(255,255,255,0.05);pointer-events:none}
 .screen-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--hot-pink),var(--neon-purple),var(--electric-blue));box-shadow:0 0 8px rgba(255,76,210,0.6);transition:width .3s}
 .sms-ticker-screen{position:absolute;bottom:0;left:0;right:0;z-index:26;height:64px;overflow:hidden;background:rgba(0,0,10,0.88);border-top:2px solid rgba(88,101,242,0.25);pointer-events:none}
@@ -1118,6 +1127,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   .tv-overlay{bottom:44px;left:6px;max-width:65%}
   .tv-overlay-inner{padding:8px 14px 6px}
   .tv-overlay-title{font-size:20px}
+  .tv-age-badge{bottom:50px;right:8px}
+  .tv-age-badge-inner{font-size:10px}
   .tv-overlay-artist{font-size:15px}
   .tv-overlay-label{font-size:16px;letter-spacing:3px;margin-bottom:4px}
   /* SMS ticker uz ekrāna */
@@ -1657,6 +1668,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
             <div class="tv-overlay-meta" id="tvOvMeta"></div>
           </div>
         </div>
+        <!-- 30+ vecuma brīdinājums — retro TV stilā -->
+        <div class="tv-age-badge" id="tvAgeBadge"><div class="tv-age-badge-inner">30+</div></div>
         <div class="screen-progress"><div class="screen-progress-fill" id="npProgressFill"></div></div>
         <div class="sms-ticker-screen"><div class="sms-ticker-inner" id="smsTicker"></div></div>
         <!-- Color bars — parādās kad video nav pieejams -->
@@ -2419,7 +2432,7 @@ function parseVideoMeta(v){
 // TV Overlay — 4 phase system with previous video tracking
 let ovTimers=[];let ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false};
 let previousVideo=null;
-function resetOverlayPhases(){ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false};ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];hideOverlay();const dim=document.getElementById('tvDimOverlay');if(dim)dim.classList.remove('dimming')}
+function resetOverlayPhases(){ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false};ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];hideOverlay();resetAgeBadge();const dim=document.getElementById('tvDimOverlay');if(dim)dim.classList.remove('dimming')}
 function showOverlay(phase,videoData,duration){
   const ov=document.getElementById('tvOverlay');
   const meta=parseVideoMeta(videoData);
@@ -2434,6 +2447,12 @@ function showOverlay(phase,videoData,duration){
   if(duration>0){const t=setTimeout(()=>{ov.classList.remove('show')},duration*1000);ovTimers.push(t)}
 }
 function hideOverlay(){const ov=document.getElementById('tvOverlay');if(ov)ov.classList.remove('show')}
+// ====== 30+ VECUMA BADGE ======
+var ageBadgeTimers=[];
+var ageBadgeShown={first:false,second:false,third:false};
+function resetAgeBadge(){ageBadgeShown={first:false,second:false,third:false};ageBadgeTimers.forEach(t=>clearTimeout(t));ageBadgeTimers=[];hideAgeBadge()}
+function showAgeBadge(dur){const b=document.getElementById('tvAgeBadge');if(!b)return;b.classList.add('show');const t=setTimeout(()=>{b.classList.remove('show')},dur*1000);ageBadgeTimers.push(t)}
+function hideAgeBadge(){const b=document.getElementById('tvAgeBadge');if(b)b.classList.remove('show')}
 function updateNowPlaying(){
   const ch=channels[currentChannel],v=ch.videos[currentVideoIdx[currentChannel]];
   const npt=document.getElementById('npText'),npc=document.getElementById('npCh');
@@ -2477,6 +2496,13 @@ function startProgressTracker(){
       // Jaunais redzams un sāk skanēt klusām, vecais vēl skan bet paslēpts
       if(remaining<=15&&remaining>10&&!ovPhasesDone.xfade&&!crossfading){ovPhasesDone.xfade=true;nextVideo()}
       // 10s pirms beigām: No vecā nekas nav palicis (crossfadeTo jau pabeidza fade)
+      // ═══ 30+ BADGE — 3x per klipu ═══
+      // 1) 10s pēc TAGAD SKAN (kas parādās ~13s) = ~23s no sākuma
+      if(c>=23&&c<35&&!ageBadgeShown.first){ageBadgeShown.first=true;showAgeBadge(10)}
+      // 2) Vidū — 20s pirms NĀKAMAIS overlay (kas nāk ~40s pirms beigām) = ~60s pirms beigām
+      if(remaining<=65&&remaining>50&&!ageBadgeShown.second){ageBadgeShown.second=true;showAgeBadge(10)}
+      // 3) 25s pirms beigām (pirms crossfade dimming)
+      if(remaining<=30&&remaining>20&&!ageBadgeShown.third){ageBadgeShown.third=true;showAgeBadge(10)}
     }catch(e){}
   },500);
 }
