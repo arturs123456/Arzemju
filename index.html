@@ -1988,7 +1988,21 @@ async function switchLangGroup(newGroup){
 let channels=FALLBACK_CHANNELS;
 let cmsLoaded=false;
 
-let currentChannel=Math.floor(Math.random()*6),currentVideoIdx={},isPoweredOn=true,player=null,playerReady=false,smsMessages=[],progressInterval=null,isMuted=false,currentVolume=80,volumeBeforeMute=80;
+// ═══ URL HASH ROUTING ═══
+// jaffa.tv/arzemju/#pop → atver Pop/Rock kanālu
+const CHANNEL_SLUGS={vecie:0,jaunie:1,pop:2,poprock:2,rock:2,dance:3,hiphop:4,rap:4,funk:4,hipster:5};
+function getChannelFromHash(){
+  const h=location.hash.replace('#','').toLowerCase().trim();
+  if(h&&CHANNEL_SLUGS.hasOwnProperty(h))return CHANNEL_SLUGS[h];
+  return Math.floor(Math.random()*6);
+}
+let _hashFromCode=false; // novērš hashchange → switchChannel ciklu
+function updateHash(ch){
+  const slugs=['vecie','jaunie','pop','dance','hiphop','hipster'];
+  const s=slugs[ch]||'';
+  if(s){_hashFromCode=true;location.hash=s}
+}
+let currentChannel=getChannelFromHash(),currentVideoIdx={},isPoweredOn=true,player=null,playerReady=false,smsMessages=[],progressInterval=null,isMuted=false,currentVolume=80,volumeBeforeMute=80;
 let lastMusicChannel=null; // Pēdējais mūzikas kanāls (ne spēle) — lai ieslēdzot atgriežas
 // Dual-player crossfade sistēma
 let playerA=null,playerB=null,playerAReady=false,playerBReady=false;
@@ -2533,6 +2547,7 @@ function switchChannel(ch){
   if(gameRunning){stopGame();const gb=document.getElementById('gamePanelBtn');if(gb)gb.classList.remove('active')}
   currentChannel=ch;
   lastMusicChannel=ch; // Atceries pēdējo mūzikas kanālu
+  updateHash(ch); // URL hash atjaunināšana
   applyChannelStyle(ch); // Kanāla vizuālais stils (VHS/clean/LOMO)
   document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));
   const newBtn=document.querySelector('#channelGrid .ch-btn[data-ch="'+ch+'"]');if(newBtn)newBtn.classList.add('active');
@@ -2547,6 +2562,12 @@ function switchChannel(ch){
     playVideoLive(v,live.seekTo);
   });
 }
+// Hash change (back/forward navigācija)
+window.addEventListener('hashchange',()=>{
+  if(_hashFromCode){_hashFromCode=false;return} // ignorēt programmatiskos hash maiņus
+  const h=location.hash.replace('#','').toLowerCase().trim();
+  if(h&&CHANNEL_SLUGS.hasOwnProperty(h)){const ch=CHANNEL_SLUGS[h];if(ch!==currentChannel&&isPoweredOn)switchChannel(ch)}
+});
 function changeChannel(dir){
   let n=currentChannel+dir;
   const total=channels.length;
