@@ -18,8 +18,8 @@
 <link rel="preconnect" href="https://swamlervnowkokqmnwgl.supabase.co">
 <!-- All fonts (5 total: Montserrat, Noto Sans, Bowlby One SC, Russo One, Handjet + Press Start 2P, Gveret Levin for UI) -->
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&family=Bowlby+One+SC&family=Russo+One&family=Handjet:wght@400;500;700&family=Press+Start+2P&family=Gveret+Levin&display=swap" rel="stylesheet">
-<!-- Supabase (defer — not needed for initial render) -->
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- Supabase (sync — required before inline scripts use it) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <!-- Firebase Realtime Database -->
 <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -2076,11 +2076,13 @@ buildChannelGrid();
     raf=requestAnimationFrame(tick);
   }
   updateCenter();
+  /* startScreen overlay covers everything — listen on it + document for fallback */
+  const ss=document.getElementById('startScreen');
+  if(ss)ss.addEventListener('mousemove',trackMouse,{passive:true});
   document.addEventListener('mousemove',trackMouse,{passive:true});
   window.addEventListener('resize',updateCenter,{passive:true});
   raf=requestAnimationFrame(tick);
   /* Stop when TV starts (saves CPU during video playback) */
-  const ss=document.getElementById('startScreen');
   if(ss){const obs=new MutationObserver(()=>{
     if(ss.classList.contains('hidden')){active=false;cancelAnimationFrame(raf);obs.disconnect()}
   });obs.observe(ss,{attributes:true,attributeFilter:['class']})}
