@@ -32,6 +32,8 @@
   --electric-blue:#19d0e8;
   --hot-pink:#ff4cd2;
   --neon-green:#35ed7e;
+  --neon-orange:#ff6b2b;
+  --neon-yellow:#ffe135;
   --chrome-silver:#c0c0c0;
   --deep-black:#000000;
   --plastic-black:#0a0a0a;
@@ -107,22 +109,22 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 @keyframes ageGatePulse{0%,100%{border-color:rgba(255,159,67,0.5);text-shadow:0 0 10px rgba(255,159,67,0.5)}50%{border-color:rgba(255,159,67,0.8);text-shadow:0 0 18px rgba(255,159,67,0.7)}}
 .start-btn{position:relative;z-index:10;margin-top:60px;width:120px;height:120px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;padding-left:8px;
-  background:linear-gradient(145deg,rgba(155,77,255,0.2),rgba(20,20,30,0.9));
-  border:3px solid rgba(155,77,255,0.6);cursor:pointer;
-  box-shadow:0 0 30px rgba(155,77,255,0.35),0 0 60px rgba(155,77,255,0.12),inset 0 0 30px rgba(155,77,255,0.08),0 8px 32px rgba(0,0,0,0.5);
+  background:linear-gradient(145deg,rgba(var(--start-btn-rgb,155,77,255),0.2),rgba(20,20,30,0.9));
+  border:3px solid rgba(var(--start-btn-rgb,155,77,255),0.6);cursor:pointer;
+  box-shadow:0 0 30px rgba(var(--start-btn-rgb,155,77,255),0.35),0 0 60px rgba(var(--start-btn-rgb,155,77,255),0.12),inset 0 0 30px rgba(var(--start-btn-rgb,155,77,255),0.08),0 8px 32px rgba(0,0,0,0.5);
   transition:all .3s ease;animation:startBtnPulse 2.5s ease-in-out infinite}
 .start-btn:hover{
-  background:linear-gradient(145deg,rgba(155,77,255,0.35),rgba(30,20,50,0.95));
-  border-color:rgba(155,77,255,0.9);
-  box-shadow:0 0 50px rgba(155,77,255,0.5),0 0 100px rgba(155,77,255,0.2),inset 0 0 40px rgba(155,77,255,0.12),0 8px 32px rgba(0,0,0,0.5);
+  background:linear-gradient(145deg,rgba(var(--start-btn-rgb,155,77,255),0.35),rgba(30,20,50,0.95));
+  border-color:rgba(var(--start-btn-rgb,155,77,255),0.9);
+  box-shadow:0 0 50px rgba(var(--start-btn-rgb,155,77,255),0.5),0 0 100px rgba(var(--start-btn-rgb,155,77,255),0.2),inset 0 0 40px rgba(var(--start-btn-rgb,155,77,255),0.12),0 8px 32px rgba(0,0,0,0.5);
   transform:scale(1.08)}
-.start-btn:active{transform:scale(0.95);box-shadow:0 0 20px rgba(155,77,255,0.4),inset 0 0 20px rgba(155,77,255,0.15)}
+.start-btn:active{transform:scale(0.95);box-shadow:0 0 20px rgba(var(--start-btn-rgb,155,77,255),0.4),inset 0 0 20px rgba(var(--start-btn-rgb,155,77,255),0.15)}
 .start-btn .play-tri{width:0;height:0;border-style:solid;border-width:28px 0 28px 48px;
   border-color:transparent transparent transparent #fff;
-  filter:drop-shadow(0 0 12px rgba(155,77,255,0.8)) drop-shadow(0 0 24px rgba(155,77,255,0.4))}
+  filter:drop-shadow(0 0 12px rgba(var(--start-btn-rgb,155,77,255),0.8)) drop-shadow(0 0 24px rgba(var(--start-btn-rgb,155,77,255),0.4))}
 .start-btn-label{position:absolute;bottom:-36px;left:50%;transform:translateX(-50%);white-space:nowrap;
-  font-family:'Handjet',var(--font-main);font-size:15px;letter-spacing:5px;color:rgba(155,77,255,0.6);text-transform:uppercase}
-@keyframes startBtnPulse{0%,100%{box-shadow:0 0 30px rgba(155,77,255,0.35),0 0 60px rgba(155,77,255,0.12),inset 0 0 30px rgba(155,77,255,0.08),0 8px 32px rgba(0,0,0,0.5);border-color:rgba(155,77,255,0.6)}50%{box-shadow:0 0 45px rgba(155,77,255,0.5),0 0 90px rgba(155,77,255,0.2),inset 0 0 35px rgba(155,77,255,0.12),0 8px 32px rgba(0,0,0,0.5);border-color:rgba(155,77,255,0.85)}}
+  font-family:'Handjet',var(--font-main);font-size:15px;letter-spacing:5px;color:rgba(var(--start-btn-rgb,155,77,255),0.6);text-transform:uppercase}
+@keyframes startBtnPulse{0%,100%{box-shadow:0 0 30px rgba(var(--start-btn-rgb,155,77,255),0.35),0 0 60px rgba(var(--start-btn-rgb,155,77,255),0.12),inset 0 0 30px rgba(var(--start-btn-rgb,155,77,255),0.08),0 8px 32px rgba(0,0,0,0.5);border-color:rgba(var(--start-btn-rgb,155,77,255),0.6)}50%{box-shadow:0 0 45px rgba(var(--start-btn-rgb,155,77,255),0.5),0 0 90px rgba(var(--start-btn-rgb,155,77,255),0.2),inset 0 0 35px rgba(var(--start-btn-rgb,155,77,255),0.12),0 8px 32px rgba(0,0,0,0.5);border-color:rgba(var(--start-btn-rgb,155,77,255),0.85)}}
 @keyframes sphereSpin{0%{transform:rotateX(-210deg) rotateY(0deg) rotateZ(185deg)}100%{transform:rotateX(-210deg) rotateY(360deg) rotateZ(185deg)}}
 @keyframes sphereShine{50%,100%{border-color:transparent;box-shadow:0 0 1px 1px transparent,0 0 1px 1px transparent inset;filter:hue-rotate(180deg)}}
 @keyframes letterGlow{
@@ -330,11 +332,13 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   display:block;margin:0;padding:0;
   letter-spacing:2px;white-space:nowrap}
 .logo-3d .logo-copy{position:absolute;top:0;left:0}
-.logo-3d .logo-copy-1{position:relative;z-index:50;color:var(--hot-pink);
+.logo-3d .logo-copy-1{position:relative;z-index:60;color:var(--hot-pink);
   text-shadow:-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,0 0 20px var(--hot-pink),0 0 40px rgba(255,0,110,0.4)}
-.logo-copy-1b{transform:perspective(500px) translate3d(0,0,-15px);color:var(--neon-purple);z-index:40}
-.logo-copy-2{transform:perspective(500px) translate3d(0,0,-30px);color:var(--electric-blue);z-index:30}
-.logo-copy-3{transform:perspective(500px) translate3d(0,0,-45px);color:var(--neon-green);z-index:20}
+.logo-copy-1b{transform:perspective(500px) translate3d(0,0,-12px);color:var(--neon-purple);z-index:50}
+.logo-copy-1c{transform:perspective(500px) translate3d(0,0,-24px);color:var(--neon-orange);z-index:40}
+.logo-copy-2{transform:perspective(500px) translate3d(0,0,-36px);color:var(--electric-blue);z-index:30}
+.logo-copy-2b{transform:perspective(500px) translate3d(0,0,-48px);color:var(--neon-yellow);z-index:20}
+.logo-copy-3{transform:perspective(500px) translate3d(0,0,-60px);color:var(--neon-green);z-index:10}
 /* ═══ .tv — static neon glow (no continuous animation) ═══ */
 .logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:clamp(38px,6.5vw,62px);font-weight:400;color:#d9fdff;letter-spacing:2px;
   position:absolute;top:calc(-0.05em);left:calc(100% - 38px);z-index:51;
@@ -575,11 +579,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .ch-face-back{
   background:
     linear-gradient(#fff1,#fff0) 100% 50% / 10% 14% no-repeat,
-    radial-gradient(at 20% 20%,#0000,rgba(60,20,120,0.3)) 0 40% / 110% 120%,
-    linear-gradient(180deg,rgba(155,77,255,0.4) 0%,rgba(120,50,220,0.25) 50%,rgba(80,30,160,0.2) 100%);
+    radial-gradient(at 20% 20%,#0000,rgba(var(--ch-color-rgb,155,77,255),0.3)) 0 40% / 110% 120%,
+    linear-gradient(180deg,rgba(var(--ch-color-rgb,155,77,255),0.4) 0%,rgba(var(--ch-color-rgb,155,77,255),0.25) 50%,rgba(var(--ch-color-rgb,155,77,255),0.2) 100%);
   transform:rotateX(180deg);border:none;
-  box-shadow:0 3px rgba(60,20,120,0.9),0 5px 8px rgba(0,0,0,0.6),
-    0 0 14px rgba(155,77,255,0.4),
+  box-shadow:0 3px rgba(var(--ch-color-rgb,155,77,255),0.7),0 5px 8px rgba(0,0,0,0.6),
+    0 0 14px rgba(var(--ch-color-rgb,155,77,255),0.4),
     inset 0 1px 0 rgba(255,255,255,0.15),
     inset 0 -1px 2px rgba(0,0,0,0.5),
     inset 2px 0 3px rgba(0,0,0,0.15),
@@ -1510,7 +1514,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
       <div class="logo-3d" id="logo3d">
         <span class="logo-copy logo-copy-1">JAFFA</span>
         <span aria-hidden="true" class="logo-copy logo-copy-1b">JAFFA</span>
+        <span aria-hidden="true" class="logo-copy logo-copy-1c">JAFFA</span>
         <span aria-hidden="true" class="logo-copy logo-copy-2">JAFFA</span>
+        <span aria-hidden="true" class="logo-copy logo-copy-2b">JAFFA</span>
         <span aria-hidden="true" class="logo-copy logo-copy-3">JAFFA</span>
         <span class="logo-dot-tv">.tv</span>
       </div>
@@ -1840,12 +1846,12 @@ const GENRE_CHANNEL_MAP = {
 
 // 6 kanāli: 2 pēc gada + 4 pēc žanra
 const CHANNEL_CONFIG = [
-  {key:'VECIE',   name:'Vecie',    label:'Vecie',     color:'#35ed7e',  icon:'📻'},  // līdz 1999
-  {key:'JAUNIE',  name:'Jaunie',   label:'Jaunie',    color:'#7a2ed9',  icon:'🔥'},  // no 2000+
-  {key:'POPROCK', name:'Pop/Rock', label:'Pop/Rock',  color:'#9b4dff',  icon:'🎵'},
-  {key:'DANCE',   name:'Dance',    label:'Dance',     color:'#00e5ff',  icon:'💃'},
-  {key:'HIPHOP',  name:'Rap/Funk', label:'Rap/Funk',  color:'#ff66ff',  icon:'🎤'},
-  {key:'HIPSTER', name:'Hipster',  label:'Hipster',   color:'#f5a623',  icon:'🎷'},
+  {key:'VECIE',   name:'Vecie',    label:'Vecie',     color:'#35ed7e',  icon:'📻'},  // neon-green
+  {key:'JAUNIE',  name:'Jaunie',   label:'Jaunie',    color:'#9b4dff',  icon:'🔥'},  // neon-purple
+  {key:'POPROCK', name:'Pop/Rock', label:'Pop/Rock',  color:'#ff4cd2',  icon:'🎵'},  // hot-pink
+  {key:'DANCE',   name:'Dance',    label:'Dance',     color:'#19d0e8',  icon:'💃'},  // electric-blue
+  {key:'HIPHOP',  name:'Rap/Funk', label:'Rap/Funk',  color:'#ff6b2b',  icon:'🎤'},  // neon-orange
+  {key:'HIPSTER', name:'Hipster',  label:'Hipster',   color:'#ffe135',  icon:'🎷'},  // neon-yellow
 ];
 
 // Fallback dati (izmanto, ja Supabase nav pieejams)
@@ -2101,26 +2107,33 @@ function buildChannelGrid(){
   channels.forEach((ch,i)=>{
     const cfg=CHANNEL_CONFIG.find(c=>c.name===ch.name)||{icon:'📺',name:ch.name};
     const active=i===currentChannel?' active':'';
-    grid.innerHTML+=`<button class="ch-btn${active}" data-ch="${i}"><div class="ch-flipdisc"><div class="ch-face ch-face-front"><span class="ch-icon">${cfg.icon}</span><span class="ch-name">${ch.name}</span></div><div class="ch-face ch-face-back"><span class="ch-icon">${cfg.icon}</span><span class="ch-name">${ch.name}</span></div></div></button>`;
+    const neon=CHANNEL_NEON_COLORS[i]||CHANNEL_NEON_COLORS[0];
+    grid.innerHTML+=`<button class="ch-btn${active}" data-ch="${i}" style="--ch-color-rgb:${neon.rgba}"><div class="ch-flipdisc"><div class="ch-face ch-face-front"><span class="ch-icon">${cfg.icon}</span><span class="ch-name">${ch.name}</span></div><div class="ch-face ch-face-back"><span class="ch-icon">${cfg.icon}</span><span class="ch-name">${ch.name}</span></div></div></button>`;
   });
 }
 buildChannelGrid();
 
-/* ═══ JAFFA logo — randomizēt krāsu secību katram apmeklējumam (4 slāņi) ═══ */
+/* ═══ Kanālu neon krāsas — katram kanālam sava krāsa (sakrīt ar logo 6 slāņiem) ═══ */
+const CHANNEL_NEON_COLORS=[
+  {css:'var(--neon-green)',    hex:'#35ed7e', glow:'0 0 20px var(--neon-green),0 0 40px rgba(53,237,126,0.4)',   rgba:'53,237,126'},   // 0 Vecie
+  {css:'var(--neon-purple)',   hex:'#9b4dff', glow:'0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)',  rgba:'155,77,255'},   // 1 Jaunie
+  {css:'var(--hot-pink)',      hex:'#ff4cd2', glow:'0 0 20px var(--hot-pink),0 0 40px rgba(255,76,210,0.4)',     rgba:'255,76,210'},   // 2 Pop/Rock
+  {css:'var(--electric-blue)', hex:'#19d0e8', glow:'0 0 20px var(--electric-blue),0 0 40px rgba(25,208,232,0.4)',rgba:'25,208,232'},   // 3 Dance
+  {css:'var(--neon-orange)',   hex:'#ff6b2b', glow:'0 0 20px var(--neon-orange),0 0 40px rgba(255,107,43,0.4)',  rgba:'255,107,43'},   // 4 Rap/Funk
+  {css:'var(--neon-yellow)',   hex:'#ffe135', glow:'0 0 20px var(--neon-yellow),0 0 40px rgba(255,225,53,0.4)',  rgba:'255,225,53'}    // 5 Hipster
+];
+
+/* ═══ JAFFA logo — randomizēt krāsu secību katram apmeklējumam (6 slāņi) ═══ */
 (function(){
-  const colors=['var(--hot-pink)','var(--neon-purple)','var(--electric-blue)','var(--neon-green)'];
-  for(let i=colors.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[colors[i],colors[j]]=[colors[j],colors[i]]}
-  const glows={
-    'var(--neon-purple)':'0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)',
-    'var(--hot-pink)':'0 0 20px var(--hot-pink),0 0 40px rgba(255,0,110,0.4)',
-    'var(--electric-blue)':'0 0 20px var(--electric-blue),0 0 40px rgba(25,208,232,0.4)',
-    'var(--neon-green)':'0 0 20px var(--neon-green),0 0 40px rgba(53,237,126,0.4)'
-  };
+  const allColors=CHANNEL_NEON_COLORS.map(c=>c.css);
+  // Shuffle: random pirmais, pārējie arī sajaukti
+  for(let i=allColors.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[allColors[i],allColors[j]]=[allColors[j],allColors[i]]}
+  const glowMap={};CHANNEL_NEON_COLORS.forEach(c=>{glowMap[c.css]=c.glow});
   const copies=document.querySelectorAll('.logo-3d .logo-copy');
   copies.forEach((c,i)=>{
-    if(colors[i]){
-      c.style.color=colors[i];
-      if(i===0) c.style.textShadow='-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,'+(glows[colors[i]]||'');
+    if(allColors[i]){
+      c.style.color=allColors[i];
+      if(i===0) c.style.textShadow='-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,'+(glowMap[allColors[i]]||'');
     }
   });
 })();
@@ -2211,6 +2224,20 @@ loadFromSupabase('arzemju').then(loaded=>{
     const cfg=CHANNEL_CONFIG[currentChannel];
     if(cfg)lbl.textContent=(cfg.icon||'')+' '+cfg.name;
   }
+  // ═══ Landing page — kanāla krāsa uz logo, teksta, play pogas ═══
+  const neon=CHANNEL_NEON_COLORS[currentChannel]||CHANNEL_NEON_COLORS[0];
+  // Logo priekšējais slānis — kanāla krāsā
+  const frontCopy=document.querySelector('.logo-3d .logo-copy-1');
+  if(frontCopy){
+    frontCopy.style.color=neon.css;
+    frontCopy.style.textShadow='-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,'+neon.glow;
+  }
+  // Play poga + label + trijstūris — viss caur --start-btn-rgb CSS custom property
+  const startBtn=document.getElementById('startBtn');
+  if(startBtn){
+    startBtn.style.setProperty('--start-btn-rgb',neon.rgba);
+  }
+  // Play trijstūris un label — krāsa no --start-btn-rgb CSS custom property
 });
 // TV startē tikai ar pogu klikšķi (nodrošina autoplay ar skaņu)
 
@@ -2233,6 +2260,7 @@ window.onYouTubeIframeAPIReady=function(){
     events:{
       onReady:(e)=>{playerAReady=true;playerReady=true;player=playerA;activeSlot='a';
         e.target.playVideo();updateNowPlaying();setVolume(80);setupSlot(playerA,'a');
+        applyChannelStyle(currentChannel);applyChannelColor(currentChannel);
       },
       onStateChange:(e)=>{
         if(activeSlot==='a'){
@@ -2517,6 +2545,16 @@ function applyChannelStyle(chIdx){
   else if(chIdx===1) s.classList.add('ch-style-clean'); // JAUNIE — tīrs
   else s.classList.add('ch-style-lomo');                // Pārējie — LOMO
 }
+/* ═══ Kanāla krāsa — ekrāna logo augšā kreisajā stūrī ═══ */
+function applyChannelColor(chIdx){
+  const neon=CHANNEL_NEON_COLORS[chIdx]||CHANNEL_NEON_COLORS[0];
+  // Ekrāna logo augšā pa kreisi
+  const sLogo=document.querySelector('.screen-logo-jaffa');
+  if(sLogo){
+    sLogo.style.color=neon.css;
+    sLogo.style.textShadow='-0.5px -0.5px 0 #000,0.5px -0.5px 0 #000,-0.5px 0.5px 0 #000,0.5px 0.5px 0 #000,'+neon.glow;
+  }
+}
 function startProgressTracker(){
   if(progressInterval)clearInterval(progressInterval);
   const _progFill=document.getElementById('npProgressFill');
@@ -2583,6 +2621,7 @@ function switchChannel(ch){
   lastMusicChannel=ch; // Atceries pēdējo mūzikas kanālu
   updateURL(ch); // URL atjaunināšana
   applyChannelStyle(ch); // Kanāla vizuālais stils (VHS/clean/LOMO)
+  applyChannelColor(ch); // Kanāla neon krāsa — ekrāna logo
   document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));
   const newBtn=document.querySelector('#channelGrid .ch-btn[data-ch="'+ch+'"]');if(newBtn)newBtn.classList.add('active');
   const ov=document.getElementById('chOverlay');ov.textContent='KAN '+(ch+1);ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),1500);
