@@ -794,7 +794,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
     linear-gradient(#44444a,#28282f) 0 40% / 110% 120% padding-box,
     linear-gradient(#5b5b61,#28282f 50%,#202028) 0 40% / 110% 120% border-box}
 .power-toggle::before{
-  content:"ON";color:#fff8;
+  content:"ENG";color:#fff8;
   transform:translate(-100%,-50%) rotateY(30deg);
   box-shadow:
     -0.5em 0 0.5em -0.25em #3334,
@@ -808,7 +808,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   clip-path:polygon(-100% 0,105% 0,105% 45%,90% 45%,90% 55%,105% 55%,105% 200%,-100% 200%)}
 .power-toggle::after{
   --chip:-5%;
-  content:"OFF";color:#e6503c;text-shadow:0 0 1em #e6503c;
+  content:"LAT";color:#e6503c;text-shadow:0 0 1em #e6503c;
   transform:translate(0,-50%) rotateY(-0.1deg);
   box-shadow:
     0 0 0 -0.25em #000,0 0 #222,0 0 0 0 #0002,0 0 0 0 #0004,0 0 0 0 #0006,0 0 0 0 #0004,
@@ -1710,7 +1710,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
                   <svg class="pair-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h6v2H5v4H3zM15 3h6v6h-2V5h-4zM3 15v6h6v-2H5v-4zm18 0v4h-4v2h6v-6z"/></svg>
                   <span class="pair-btn-text">FULL</span>
                 </button>
-                <button class="power-pair-btn game-btn" id="gamePanelBtn">
+                <button class="power-pair-btn game-btn" id="gamePanelBtn" style="display:none">
                   <span class="pair-btn-icon-text">☕</span>
                   <span class="pair-btn-text">CHILL</span>
                 </button>
@@ -1829,69 +1829,61 @@ const SUPABASE_URL = 'https://swamlervnowkokqmnwgl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3YW1sZXJ2bm93a29rcW1ud2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjE1NDksImV4cCI6MjA4ODE5NzU0OX0.NaBULm_Z77mq2-vkqugNblaKneCS2gx0cLNGH_vL18k';
 const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Genre → kanāla mapping (Supabase genre1 → LOM kanāla key)
+// Genre → kanāla mapping (Supabase genre1 → kanāla key)
 const GENRE_CHANNEL_MAP = {
-  'pop':'POP','art pop':'POP','dance pop':'POP','country pop':'POP',
-  'latin pop':'POP','indie pop':'POP','reggae pop':'POP','pop rock':'POP',
-  'dream pop':'POP','new wave':'POP','r&b':'POP','country':'POP',
-  'rock':'ROKS','art rock':'ROKS','indie rock':'ROKS','alternative rock':'ROKS',
-  'post-punk':'ROKS','punk':'ROKS','hardcore punk':'ROKS','gothic rock':'ROKS',
-  'grunge':'ROKS','shoegaze':'ROKS','krautrock':'ROKS','noise rock':'ROKS',
-  'post-rock':'ROKS','psychedelic rock':'ROKS','folk rock':'ROKS',
-  'post-hardcore':'ROKS','slowcore':'ROKS',
-  'hip hop':'RAP','alternative hip-hop':'RAP','spoken word':'RAP',
-  'jazz':'JAZZ','acid jazz':'JAZZ','jazz fusion':'JAZZ','free jazz':'JAZZ',
-  'neo-soul':'JAZZ','soul':'JAZZ','trip-hop':'JAZZ','folk':'JAZZ',
-  'ambient':'JAZZ','lo-fi':'JAZZ',
-  'dance':'DANCE','electronic':'DANCE','disco':'DANCE','funk':'DANCE',
-  'reggae':'DANCE','ska':'DANCE'
+  // Pop/Rock
+  'pop':'POPROCK','art pop':'POPROCK','dance pop':'POPROCK','country pop':'POPROCK',
+  'latin pop':'POPROCK','indie pop':'HIPSTER','reggae pop':'POPROCK','pop rock':'POPROCK',
+  'dream pop':'HIPSTER','new wave':'POPROCK','r&b':'POPROCK','country':'POPROCK',
+  'rock':'POPROCK','art rock':'POPROCK','alternative rock':'HIPSTER',
+  'psychedelic rock':'POPROCK',
+  // Hip-Hop / Funk
+  'hip hop':'HIPHOP','alternative hip-hop':'HIPHOP','spoken word':'HIPHOP',
+  'funk':'HIPHOP','neo-soul':'HIPHOP','soul':'HIPHOP',
+  // Dance / Disco
+  'dance':'DANCE','electronic':'DANCE','disco':'DANCE',
+  'reggae':'DANCE','ska':'DANCE',
+  // Hipster / Indie
+  'post-punk':'HIPSTER','punk':'HIPSTER','hardcore punk':'HIPSTER','gothic rock':'HIPSTER',
+  'grunge':'HIPSTER','shoegaze':'HIPSTER','krautrock':'HIPSTER','noise rock':'HIPSTER',
+  'post-rock':'HIPSTER','indie rock':'HIPSTER','folk rock':'HIPSTER',
+  'post-hardcore':'HIPSTER','slowcore':'HIPSTER',
+  'jazz':'HIPSTER','acid jazz':'HIPSTER','jazz fusion':'HIPSTER','free jazz':'HIPSTER',
+  'trip-hop':'HIPSTER','folk':'HIPSTER','ambient':'HIPSTER','lo-fi':'HIPSTER'
 };
 
 // (Legacy) Google Sheets URL — vairs netiek izmantots
 const SHEETS_CSV_URL = '';
 
-// Kanālu konfigurācija (secība, nosaukumi, krāsas)
-// csvPrefix — kolonnas nosaukuma sākums, pēc kura meklē CSV headerī
+// 6 kanāli: 2 pēc gada + 4 pēc žanra
 const CHANNEL_CONFIG = [
-  // 14 kanāli: 8 pēc stila + 1 ārzemju + 3 pēc gada + 1 spēle + 1 klasika
-  {key:'POP',     name:'POP',     label:'Pop',              color:'#9b4dff',  icon:'🎵', csvPrefix:'POP'},
-  {key:'ROKS',    name:'ROKS',    label:'Roks',             color:'#19d0e8',  icon:'🎸', csvPrefix:'SMAGAIS'},
-  {key:'ŠLĀGERI', name:'ŠLĀGERI', label:'Šlāgeri',         color:'#ff4cd2',  icon:'🎶', csvPrefix:'ŠLĀGERIS'},
-  {key:'RAP',     name:'RAP',     label:'Rap',              color:'#ff66ff',  icon:'🎤', csvPrefix:'HIPHOP'},
-  {key:'JAZZ',    name:'JAZZ',    label:'Jazz',             color:'#f5a623',  icon:'🎷', csvPrefix:'JAZZ'},
-  {key:'DANCE',   name:'DANCE',   label:'Dance',            color:'#00e5ff',  icon:'💃', csvPrefix:'DEJU'},
-  {key:'LIVE',    name:'LIVE',    label:'Live & EV',        color:'#e53935',  icon:'🎬', csvPrefix:'LIVE'},
-  {key:'BĒRNI',   name:'BĒRNI',   label:'Bērni',            color:'#ffdd57',  icon:'🧸', csvPrefix:'BĒRNU'},
-  {key:'ĀRZ',     name:'ĀRZ',     label:'Ārzemju',          color:'#c0c0c0',  icon:'🌍', csvPrefix:'ĀRZEMJU'},
-  // Gada kanāli (automātiski pēc gada)
-  {key:'RETRO',   name:'RETRO',   label:'Retro',            color:'#35ed7e',  icon:'📻', csvPrefix:'RETRO'},   // līdz 1990
-  {key:'ATMODA',  name:'ATMODA',  label:'Atmoda',           color:'#ff8a65',  icon:'🌅', csvPrefix:'_ATMODA'},  // 1991-2021
-  {key:'JAUNUMI', name:'JAUNUMI', label:'Jaunumi',          color:'#7a2ed9',  icon:'🔥', csvPrefix:'JAUNUMI'},  // 2022+
-  // Spēle + Klasika
-  {key:'SPĒLE',   name:'SPĒLE',   label:'Spēle',            color:'#ff2975',  icon:'🎮', type:'game'},
-  {key:'KLASIKA', name:'KLASIKA', label:'Klasika',           color:'#d4af37',  icon:'🎻', csvPrefix:'KLASIKA'}
+  {key:'VECIE',   name:'Vecie',    label:'Vecie',     color:'#35ed7e',  icon:'📻'},  // līdz 1999
+  {key:'JAUNIE',  name:'Jaunie',   label:'Jaunie',    color:'#7a2ed9',  icon:'🔥'},  // no 2000+
+  {key:'POPROCK', name:'Pop/Rock', label:'Pop/Rock',  color:'#9b4dff',  icon:'🎵'},
+  {key:'DANCE',   name:'Dance',    label:'Dance',     color:'#00e5ff',  icon:'💃'},
+  {key:'HIPHOP',  name:'Rap/Funk', label:'Rap/Funk',  color:'#ff66ff',  icon:'🎤'},
+  {key:'HIPSTER', name:'Hipster',  label:'Hipster',   color:'#f5a623',  icon:'🎷'},
 ];
 
-// Fallback dati (izmanto, ja Google Sheets nav pieejams)
+// Fallback dati (izmanto, ja Supabase nav pieejams)
 const FALLBACK_CHANNELS=[
-  {name:'POP',label:'Pop',color:'#9b4dff',videos:[
-    {id:'J-CmEbXH90M',title:'BrainStorm — Maybe',artist:'BrainStorm',song:'Maybe',decade:'modern',duration:205},
-    {id:'p8FNO0DtBng',title:'Dons — Hollow',artist:'Dons',song:'Hollow',decade:'modern',duration:215}
+  {name:'Vecie',label:'Vecie',color:'#35ed7e',videos:[
+    {id:'jqUTbDiuN_M',title:'Fallback — Vecie',artist:'Fallback',song:'Vecie',duration:195}
   ]},
-  {name:'ROKS',label:'Roks',color:'#19d0e8',videos:[
-    {id:'lbeR6Tr_guI',title:'Jumprava — Vēlreiz',artist:'Jumprava',song:'Vēlreiz',decade:'vcr',duration:240}
+  {name:'Jaunie',label:'Jaunie',color:'#7a2ed9',videos:[
+    {id:'Z0ZTfUM2-9w',title:'Fallback — Jaunie',artist:'Fallback',song:'Jaunie',duration:200}
   ]},
-  {name:'RETRO',label:'Retro (līdz 1989)',color:'#35ed7e',videos:[
-    {id:'jqUTbDiuN_M',title:'Čikāgas Piecīši — Pazudušais Dēls',artist:'Čikāgas Piecīši',song:'Pazudušais Dēls',decade:'vintage',duration:195}
+  {name:'Pop/Rock',label:'Pop/Rock',color:'#9b4dff',videos:[
+    {id:'J-CmEbXH90M',title:'Fallback — Pop/Rock',artist:'Fallback',song:'Pop',duration:205}
   ]},
-  {name:'ATMODA',label:'Atmoda (1990-2019)',color:'#ff8a65',videos:[
-    {id:'LWLozvyMwhY',title:'BrainStorm — Feels',artist:'BrainStorm',song:'Feels',decade:'modern',duration:230}
+  {name:'Dance',label:'Dance',color:'#00e5ff',videos:[
+    {id:'p8FNO0DtBng',title:'Fallback — Dance',artist:'Fallback',song:'Dance',duration:215}
   ]},
-  {name:'JAUNUMI',label:'Jaunumi (2020+)',color:'#7a2ed9',videos:[
-    {id:'Z0ZTfUM2-9w',title:'Arvis Reiks — Thinkin Bout You',artist:'Arvis Reiks',song:'Thinkin Bout You',decade:'modern',duration:200}
+  {name:'Rap/Funk',label:'Rap/Funk',color:'#ff66ff',videos:[
+    {id:'LWLozvyMwhY',title:'Fallback — Rap/Funk',artist:'Fallback',song:'RapFunk',duration:230}
   ]},
-  {name:'SPĒLE',label:'Spēle',color:'#ff2975',_isGame:true,videos:[
-    {id:'_game_',title:'Synthwave Racer',artist:'LOM',song:'Game',duration:9999}
+  {name:'Hipster',label:'Hipster',color:'#f5a623',videos:[
+    {id:'lbeR6Tr_guI',title:'Fallback — Hipster',artist:'Fallback',song:'Hipster',duration:240}
   ]}
 ];
 
@@ -2020,7 +2012,6 @@ function supabaseToChannels(songs){
   CHANNEL_CONFIG.forEach(cfg=>{channelMap[cfg.key]={name:cfg.name,label:cfg.label,color:cfg.color,videos:[]}});
   songs.forEach(song=>{
     const year=song.year||0;
-    const era=year>0?(year<=1989?'vintage':year<=2000?'vcr':'modern'):'modern';
     const video={
       id:song.youtube_id,
       title:(song.artist||'')+' — '+(song.title||''),
@@ -2028,33 +2019,26 @@ function supabaseToChannels(songs){
       song:song.title||'',
       album:song.album||'',
       year:year,
-      decade:era,
       duration:song.duration_sec||240,
       trimStart:song.trim_start??5,
       trimEnd:song.trim_end??10
     };
-    const addedTo=new Set();
     const genre=(song.genre1||'').toLowerCase().trim();
-    // 1) Genre → kanāls
-    const chKey=GENRE_CHANNEL_MAP[genre];
-    if(chKey&&channelMap[chKey]){channelMap[chKey].videos.push(video);addedTo.add(chKey)}
-    // 2) Visas dziesmas → ĀRZ kanāls
-    if(channelMap['ĀRZ']){channelMap['ĀRZ'].videos.push(video);addedTo.add('ĀRZ')}
-    // 3) Automātiski pēc gada
+    // 1) Pēc gada: Vecie (līdz 1999) / Jaunie (no 2000)
     if(year>0){
-      if(year<=1990&&channelMap['RETRO']){channelMap['RETRO'].videos.push(video)}
-      if(year>=1991&&year<=2021&&channelMap['ATMODA']){channelMap['ATMODA'].videos.push(video)}
-      if(year>=2022&&channelMap['JAUNUMI']){channelMap['JAUNUMI'].videos.push(video)}
+      if(year<=1999&&channelMap['VECIE'])channelMap['VECIE'].videos.push(video);
+      if(year>=2000&&channelMap['JAUNIE'])channelMap['JAUNIE'].videos.push(video);
     }
+    // 2) Pēc žanra → Pop/Rock, Dance, Rap/Funk, Hipster
+    const chKey=GENRE_CHANNEL_MAP[genre];
+    if(chKey&&channelMap[chKey])channelMap[chKey].videos.push(video);
   });
-  return CHANNEL_CONFIG.map(cfg=>{
-    const ch=channelMap[cfg.key];
-    if(cfg.type==='game'){ch._isGame=true;ch.videos=[{id:'_game_',title:'Synthwave Racer',artist:'LOM',song:'Game',duration:9999}]}
-    return ch;
-  }).filter(ch=>ch.videos.length>0||ch._isGame);
+  return CHANNEL_CONFIG.map(cfg=>channelMap[cfg.key]).filter(ch=>ch.videos.length>0);
 }
 
-async function loadFromSupabase(){
+let currentGroup='arzemju';
+async function loadFromSupabase(group){
+  group=group||currentGroup||'arzemju';
   try{
     let allSongs=[];
     let from=0;
@@ -2063,6 +2047,7 @@ async function loadFromSupabase(){
       const{data,error}=await _sb
         .from('songs')
         .select('artist,title,year,genre1,youtube_id,album,duration_sec,trim_start,trim_end')
+        .eq('group_name',group)
         .not('youtube_id','is',null)
         .neq('youtube_id','')
         .order('artist')
@@ -2074,9 +2059,21 @@ async function loadFromSupabase(){
     }
     if(allSongs.length===0)return false;
     const parsed=supabaseToChannels(allSongs);
-    if(parsed.length>0){channels=parsed;cmsLoaded=true;console.log('CMS: Ielādētas',allSongs.length,'dziesmas no Supabase');return true}
+    if(parsed.length>0){channels=parsed;cmsLoaded=true;console.log('CMS: Ielādētas',allSongs.length,'dziesmas no Supabase (',group,')');return true}
     return false;
   }catch(e){console.warn('Supabase nav pieejams, izmanto fallback',e);return false}
+}
+async function switchLangGroup(newGroup){
+  if(newGroup===currentGroup)return;
+  currentGroup=newGroup;
+  showStatic(async()=>{
+    const loaded=await loadFromSupabase(newGroup);
+    if(loaded){
+      syncAllChannels();
+      buildChannelGrid();
+      switchChannel(0);
+    }
+  });
 }
 
 // Ielādē datus no Google Sheets vai izmanto fallback
@@ -2180,8 +2177,6 @@ function buildChannelGrid(){
   const grid=document.getElementById('channelGrid');
   grid.innerHTML='';
   channels.forEach((ch,i)=>{
-    if(isGameChannel(i))return; // Spēle ir atsevišķā pogā augšā, ne gridā
-    // Atrast atbilstošo CHANNEL_CONFIG ierakstu
     const cfg=CHANNEL_CONFIG.find(c=>c.name===ch.name)||{icon:'📺',name:ch.name};
     const active=i===0?' active':'';
     grid.innerHTML+=`<button class="ch-btn${active}" data-ch="${i}"><div class="ch-flipdisc"><div class="ch-face ch-face-front"><span class="ch-icon">${cfg.icon}</span><span class="ch-name">${ch.name}</span></div><div class="ch-face ch-face-back"><span class="ch-icon">${cfg.icon}</span><span class="ch-name">${ch.name}</span></div></div></button>`;
@@ -2209,7 +2204,7 @@ function startTV(){
   },600);
 }
 // Ielādē CMS datus sākuma ekrāna laikā, tad startē TV
-loadFromSupabase().then(loaded=>{
+loadFromSupabase('arzemju').then(loaded=>{
   if(loaded){
     syncAllChannels();
     buildChannelGrid();
@@ -2489,10 +2484,7 @@ document.getElementById('channelGrid').addEventListener('click',(e)=>{
   const btn=e.target.closest('.ch-btn');if(!btn||!isPoweredOn)return;
   const ch=parseInt(btn.dataset.ch);if(ch===currentChannel)return;switchChannel(ch);
 });
-function isGameChannel(ch){
-  const c=channels[ch];if(!c)return false;
-  return c._isGame||CHANNEL_CONFIG.find(cfg=>cfg.key===c.name&&cfg.type==='game');
-}
+function isGameChannel(){return false}
 function switchChannel(ch){
   if(ch<0||ch>=channels.length)return;
   hideColorBars();clearWatchdog();skipChain=0; // Reset error state
@@ -2579,7 +2571,7 @@ function togglePower(){
   }
 }
 document.getElementById('powerToggleInput').addEventListener('change',function(){
-  if(this.checked!==isPoweredOn)togglePower();
+  switchLangGroup(this.checked ? 'arzemju' : 'latviesu');
 });
 // SPĒLE poga — atsevišķā panelī augšā
 document.getElementById('gamePanelBtn').addEventListener('click',function(){
@@ -2826,8 +2818,6 @@ updateLiveCount();
 setInterval(updateLiveCount,7000+Math.random()*6000); // Ik 7-13 sek
 
 // ═══ REPORT + IETEIKUMU SISTĒMA ═══
-// Google Sheets Apps Script Web App URL — nomainīt uz savu!
-const SHEETS_SUBMIT_URL=''; // TODO: ielīmē savu Google Apps Script deploy URL
 
 function getReportContext(){
   const v=getCurrentVideo();
@@ -2835,13 +2825,21 @@ function getReportContext(){
   return{videoId:v?v.id:'',title:v?v.title:'',artist:v?v.artist:'',song:v?v.song:'',channel:chName};
 }
 
-function submitToSheets(data){
-  if(!SHEETS_SUBMIT_URL){console.log('📋 Sheets submit (nav URL):',data);return Promise.resolve(true)}
-  return fetch(SHEETS_SUBMIT_URL,{
-    method:'POST',mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data)
-  }).then(()=>true).catch(e=>{console.warn('Sheets submit kļūda:',e);return false});
+async function submitReport(data){
+  try{
+    const{error}=await _sb.from('reports').insert([{
+      type:data.type,
+      vote:data.vote||null,
+      suggestion:data.suggestion||null,
+      video_id:data.videoId,
+      song_title:data.title,
+      artist:data.artist,
+      song:data.song,
+      channel:data.channel
+    }]);
+    if(error){console.warn('Report kļūda:',error);return false}
+    return true;
+  }catch(e){console.warn('Report submit kļūda:',e);return false}
 }
 
 function showReportStatus(msg,color){
@@ -2867,7 +2865,7 @@ document.getElementById('reactReport').addEventListener('click',(e)=>{
 document.getElementById('reportFits').addEventListener('click',(e)=>{
   e.stopPropagation();
   const ctx=getReportContext();
-  submitToSheets({type:'vote',vote:'atbilst',...ctx,time:new Date().toISOString()});
+  submitReport({type:'vote',vote:'atbilst',...ctx});
   showReportStatus('Paldies! Atzīmēts.','#35ed7e');
 });
 
@@ -2875,7 +2873,7 @@ document.getElementById('reportFits').addEventListener('click',(e)=>{
 document.getElementById('reportNotFits').addEventListener('click',(e)=>{
   e.stopPropagation();
   const ctx=getReportContext();
-  submitToSheets({type:'vote',vote:'neatbilst',...ctx,time:new Date().toISOString()});
+  submitReport({type:'vote',vote:'neatbilst',...ctx});
   showReportStatus('Atzīmēts — neatbilst.','#ffdd57');
 });
 
@@ -2888,7 +2886,7 @@ document.getElementById('suggestSubmit').addEventListener('click',(e)=>{
   const ctx=getReportContext();
   const btn=document.getElementById('suggestSubmit');
   btn.disabled=true;btn.textContent='SŪTA...';
-  submitToSheets({type:'suggestion',suggestion:val,...ctx,time:new Date().toISOString()}).then(()=>{
+  submitReport({type:'suggestion',suggestion:val,...ctx}).then(()=>{
     btn.disabled=false;btn.textContent='IESNIEGT IETEIKUMU';
     input.value='';
     showReportStatus('Paldies par ieteikumu!','#8be9fd');
