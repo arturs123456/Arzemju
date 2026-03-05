@@ -1818,9 +1818,9 @@ const GENRE_CHANNEL_MAP = {
   'latin pop':'POPROCK','indie pop':'HIPSTER','reggae pop':'POPROCK','pop rock':'POPROCK',
   'dream pop':'HIPSTER','new wave':'POPROCK','r&b':'POPROCK','country':'POPROCK',
   'rock':'POPROCK','art rock':'POPROCK','alternative rock':'HIPSTER',
-  'psychedelic rock':'POPROCK',
+  'psychedelic rock':'HIPSTER',
   // Hip-Hop / Funk
-  'hip hop':'HIPHOP','alternative hip-hop':'HIPHOP','spoken word':'HIPHOP',
+  'hip hop':'HIPHOP','alternative hip-hop':['HIPHOP','HIPSTER'],'spoken word':'HIPHOP',
   'funk':'HIPHOP','neo-soul':'HIPHOP','soul':'HIPHOP',
   // Dance / Disco
   'dance':'DANCE','electronic':'DANCE','disco':'DANCE',
@@ -1834,7 +1834,7 @@ const GENRE_CHANNEL_MAP = {
   'trip-hop':'HIPSTER','folk':'HIPSTER','ambient':'HIPSTER','lo-fi':'HIPSTER',
   'indie folk':'HIPSTER','freak folk':'HIPSTER','downtempo':'HIPSTER',
   'alternative':'HIPSTER','post-punk revival':'HIPSTER','chillwave':'HIPSTER',
-  'psychedelic pop':'HIPSTER','psychedelic electronic':'DANCE',
+  'psychedelic pop':'HIPSTER','psychedelic electronic':'HIPSTER',
   'indie electronic':'DANCE','punk rock':'POPROCK','heavy metal':'POPROCK',
   'power pop':'POPROCK','nu metal':'POPROCK','rockabilly':'POPROCK',
   'noise pop':'HIPSTER'
@@ -1935,7 +1935,10 @@ function supabaseToChannels(songs){
     }
     // 2) Pēc žanra → Pop/Rock, Dance, Rap/Funk, Hipster
     const chKey=GENRE_CHANNEL_MAP[genre];
-    if(chKey&&channelMap[chKey])channelMap[chKey].videos.push(video);
+    if(chKey){
+      const keys=Array.isArray(chKey)?chKey:[chKey];
+      keys.forEach(k=>{if(channelMap[k])channelMap[k].videos.push(video)});
+    }
   });
   return CHANNEL_CONFIG.map(cfg=>channelMap[cfg.key]).filter(ch=>ch.videos.length>0);
 }
