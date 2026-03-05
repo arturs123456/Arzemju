@@ -96,7 +96,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .start-screen{transition:opacity 0.6s ease}
 .start-screen.fade-out{opacity:0;pointer-events:none}
 .start-screen.hidden{display:none}
-.start-age-gate{position:relative;z-index:10;margin-top:30px;text-align:center;max-width:320px;
+.start-age-gate{position:relative;z-index:10;margin-top:42px;text-align:center;max-width:320px;
   padding:12px 24px;border:2px solid rgba(255,159,67,0.5);border-radius:8px;
   background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);
   font-family:'Handjet',var(--font-main),sans-serif;font-size:20px;font-weight:700;
@@ -325,19 +325,19 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 /* ═══ JAFFA.tv logo — 3D perspective effect (GPU-composited transforms) ═══ */
 .logo-3d{display:block;position:relative;z-index:2;margin:0 auto;text-align:center;width:fit-content}
 .logo-3d .logo-copy{
-  font-family:'Lilita One','Bowlby One SC',cursive;font-size:clamp(48px,15vw,120px);line-height:1;
-  text-shadow:-0.7px -0.7px 0 #000,0.7px -0.7px 0 #000,-0.7px 0.7px 0 #000,0.7px 0.7px 0 #000;
+  font-family:'Lilita One','Bowlby One SC',cursive;font-size:clamp(56px,18vw,150px);line-height:1;
+  text-shadow:-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000;
   display:block;margin:0;padding:0;
   letter-spacing:2px;white-space:nowrap}
 .logo-3d .logo-copy{position:absolute;top:0;left:0}
 .logo-copy-1{position:relative;z-index:50;color:var(--hot-pink);
-  text-shadow:-0.7px -0.7px 0 #000,0.7px -0.7px 0 #000,-0.7px 0.7px 0 #000,0.7px 0.7px 0 #000,0 0 20px var(--hot-pink),0 0 40px rgba(255,0,110,0.4)}
+  text-shadow:-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,0 0 20px var(--hot-pink),0 0 40px rgba(255,0,110,0.4)}
 .logo-copy-1b{transform:perspective(500px) translate3d(0,0,-15px);color:var(--neon-purple);z-index:40}
 .logo-copy-2{transform:perspective(500px) translate3d(0,0,-30px);color:var(--electric-blue);z-index:30}
 .logo-copy-3{transform:perspective(500px) translate3d(0,0,-45px);color:var(--neon-green);z-index:20}
 /* ═══ .tv — static neon glow (no continuous animation) ═══ */
 .logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:clamp(49px,7.8vw,75px);font-weight:400;color:#d9fdff;letter-spacing:2px;
-  position:absolute;top:calc(-0.15em + 3px);right:calc(-0.2em - 18px);z-index:51;
+  position:absolute;top:calc(-0.1em + 5px);left:calc(100% - 22px);z-index:51;
   display:inline-block;transform:rotate(-10deg);
   text-shadow:0 0 7px #00f0ff,0 0 15px #00f0ff,0 0 30px rgba(0,115,255,0.5)}
 /* ═══ JAFFA.tv logo — ekrāna augšā pa kreisi ═══ */
@@ -351,10 +351,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   animation:vhsRgbText 1.5s steps(9) infinite alternate}
 .ch-switch-overlay.show{opacity:1}
 /* LIVE badge + report button — labajā augšā */
-.tv-live-strip{position:absolute;top:14px;right:16px;z-index:15;display:flex;align-items:center;gap:8px;pointer-events:auto;
+.tv-live-strip{position:absolute;top:12px;right:16px;z-index:15;display:flex;align-items:center;gap:8px;pointer-events:auto;
   animation:vhsRgbText 2.5s steps(9) infinite alternate}
 .tv-live-badge{display:flex;align-items:center;gap:5px;font-family:'Press Start 2P',monospace;font-size:clamp(7px,1vw,12px);color:#fff;
-  background:none;padding:5px 10px;border-radius:4px;letter-spacing:1px;white-space:nowrap}
+  background:none;padding:2px 10px;border-radius:4px;letter-spacing:1px;white-space:nowrap}
 .tv-live-dot{width:8px;height:8px;border-radius:50%;background:#e53935;display:inline-block;animation:livePulse 1.5s ease-in-out infinite;margin-right:2px;flex-shrink:0}
 @keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 4px #e53935}50%{opacity:.4;box-shadow:0 0 10px #ff5252,0 0 18px #e53935}}
 .tv-live-count{color:rgba(255,255,255,0.8);margin-left:3px}
@@ -1038,13 +1038,13 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 
 /* MOBILE — sākuma ekrāna logo samazināšana */
 @media(max-width:540px){
-  .logo-dot-tv{font-size:32px;top:-6px}
+  .logo-dot-tv{font-size:32px;top:-4px;left:calc(100% - 14px)}
   .start-btn{width:90px;height:90px;margin-top:24px}
   .start-btn .play-tri{border-width:20px 0 20px 35px}
   .start-btn-label{font-size:12px;bottom:-28px}
 }
 @media(max-width:400px){
-  .logo-dot-tv{font-size:24px;top:-4px}
+  .logo-dot-tv{font-size:24px;top:-3px;left:calc(100% - 10px)}
   .start-btn{width:76px;height:76px;margin-top:18px}
   .start-btn .play-tri{border-width:16px 0 16px 28px}
 }
@@ -1052,7 +1052,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 /* MOBILE LANDSCAPE — Sākuma ekrāns */
 @media(max-height:500px) and (orientation:landscape){
   .start-screen{gap:6px;justify-content:center}
-  .logo-dot-tv{font-size:26px;top:-6px}
+  .logo-dot-tv{font-size:26px;top:-4px;left:calc(100% - 12px)}
   .start-age-gate{font-size:13px;letter-spacing:2px;padding:6px 14px;margin-top:8px;max-width:240px}
   .start-btn{width:60px;height:60px;margin-top:8px}
   .start-btn .play-tri{border-width:13px 0 13px 22px}
@@ -1060,7 +1060,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 }
 @media(max-height:380px) and (orientation:landscape){
   .start-screen{gap:3px}
-  .logo-dot-tv{font-size:18px;top:-4px}
+  .logo-dot-tv{font-size:18px;top:-3px;left:calc(100% - 8px)}
   .start-age-gate{font-size:11px;letter-spacing:1px;padding:4px 10px;margin-top:4px;max-width:200px}
   .start-btn{width:48px;height:48px;margin-top:4px}
   .start-btn .play-tri{border-width:11px 0 11px 18px}
@@ -2081,7 +2081,7 @@ buildChannelGrid();
   copies.forEach((c,i)=>{
     if(colors[i]){
       c.style.color=colors[i];
-      if(i===0) c.style.textShadow='-0.7px -0.7px 0 #000,0.7px -0.7px 0 #000,-0.7px 0.7px 0 #000,0.7px 0.7px 0 #000,'+(glows[colors[i]]||'');
+      if(i===0) c.style.textShadow='-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,'+(glows[colors[i]]||'');
     }
   });
 })();
