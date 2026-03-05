@@ -92,6 +92,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .start-screen{transition:opacity 0.6s ease}
 .start-screen.fade-out{opacity:0;pointer-events:none}
 .start-screen.hidden{display:none}
+.start-age-gate{position:relative;z-index:10;margin-top:30px;text-align:center;max-width:320px;
+  padding:12px 24px;border:2px solid rgba(255,159,67,0.5);border-radius:8px;
+  background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);
+  font-family:'Handjet',var(--font-main),sans-serif;font-size:20px;font-weight:700;
+  letter-spacing:3px;color:#ff9f43;text-transform:uppercase;
+  text-shadow:0 0 10px rgba(255,159,67,0.5);
+  animation:ageGatePulse 3s ease-in-out infinite}
+@keyframes ageGatePulse{0%,100%{border-color:rgba(255,159,67,0.5);text-shadow:0 0 10px rgba(255,159,67,0.5)}50%{border-color:rgba(255,159,67,0.8);text-shadow:0 0 18px rgba(255,159,67,0.7)}}
 .start-btn{position:relative;z-index:10;margin-top:44px;width:120px;height:120px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;padding-left:8px;
   background:linear-gradient(145deg,rgba(155,77,255,0.2),rgba(20,20,30,0.9));
@@ -461,6 +469,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   color:var(--neon-purple);text-shadow:0 0 10px rgba(155,77,255,0.6),0 0 20px rgba(155,77,255,0.25)}
 .tv-overlay.phase-next .tv-overlay-inner{border-left-color:var(--electric-blue);box-shadow:0 4px 20px rgba(0,0,0,0.6),0 0 20px rgba(25,208,232,0.12)}
 .tv-overlay.phase-next .tv-overlay-label{color:var(--electric-blue);text-shadow:0 0 10px rgba(25,208,232,0.6),0 0 20px rgba(25,208,232,0.25)}
+.tv-overlay.phase-just .tv-overlay-inner{border-left-color:#ff9f43;box-shadow:0 4px 20px rgba(0,0,0,0.6),0 0 20px rgba(255,159,67,0.12)}
+.tv-overlay.phase-just .tv-overlay-label{color:#ff9f43;text-shadow:0 0 10px rgba(255,159,67,0.6),0 0 20px rgba(255,159,67,0.25)}
 .tv-overlay-title{font-family:'Russo One',var(--font-display),sans-serif;font-size:30px;font-weight:400;color:#fff;margin-bottom:4px;line-height:1.2;
   white-space:normal;word-wrap:break-word;text-shadow:0 2px 6px rgba(0,0,0,0.9),0 0 12px rgba(155,77,255,0.1)}
 .tv-overlay-artist{font-family:'Russo One',var(--font-display),sans-serif;font-size:22px;font-weight:400;color:rgba(200,210,240,0.75);
@@ -1117,6 +1127,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   .logo-tv{font-size:44px;top:-16px;margin-left:-32px}
   .lomk-sub{font-size:14px;letter-spacing:4px;margin-top:6px}
   .start-sub{font-size:12px;margin-top:2px}
+  .start-age-gate{font-size:13px;letter-spacing:2px;padding:6px 14px;margin-top:8px;max-width:240px}
   .start-btn{width:60px;height:60px;margin-top:8px}
   .start-btn .play-tri{border-width:13px 0 13px 22px}
   .start-btn-label{font-size:10px;bottom:-22px}
@@ -1130,6 +1141,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   .logo-tv{font-size:30px;top:-10px;margin-left:-22px}
   .lomk-sub{font-size:11px;letter-spacing:3px;margin-top:3px}
   .start-sub{font-size:10px;margin-top:1px}
+  .start-age-gate{font-size:11px;letter-spacing:1px;padding:4px 10px;margin-top:4px;max-width:200px}
   .start-btn{width:48px;height:48px;margin-top:4px}
   .start-btn .play-tri{border-width:11px 0 11px 18px}
   .start-btn-label{font-size:9px;bottom:-20px}
@@ -1581,6 +1593,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
       <div class="start-sub">kopš 2003. gada</div>
     </div>
   </div>
+  <div class="start-age-gate">YOU MUST BE 30+ TO VIEW THIS CONTENT</div>
   <button class="start-btn" id="startBtn" onclick="launchTV()">
     <div class="play-tri"></div>
     <span class="start-btn-label">CHILL</span>
@@ -2388,14 +2401,14 @@ function crossfadeTo(v){
     }
   },interval);
   updateNowPlaying();resetOverlayPhases();
-  startWatchdog(v.id); // Watchdog: ja 12s nesāk spēlēt — auto-skip
-  // Pēc crossfade: rāda "TAGAD SKAN" ar jauno dziesmu ~12s (aizkave 13s no crossfade sākuma)
-  const t1=setTimeout(()=>{
-    showOverlay('now',v,12); // 12s un pazūd
-    ovPhasesDone.now=true;
-    try{if(window._ttsPlayPending)window._ttsPlayPending()}catch(e){}
-  },13000);
-  ovTimers.push(t1);
+  startWatchdog(v.id);
+  // TIKKO SKANĒJA — ~10s pēc crossfade (rāda iepriekšējo dziesmu 10s)
+  if(previousVideo){
+    const tJust=setTimeout(()=>{safeShowOverlay('just',previousVideo,10)},10000);
+    ovTimers.push(tJust);
+  }
+  // TAGAD SKAN — progress tracker parādīs pie c>=20 (kolīziju sistēma aizkavēs aiz TIKKO)
+  try{if(window._ttsPlayPending)window._ttsPlayPending()}catch(e){}
 }
 function playVideo(v){crossfadeTo(v)}
 function playVideoLive(v,seekTo){
@@ -2464,24 +2477,60 @@ function parseVideoMeta(v){
   if(parts2.length>=2)return{artist:parts2[0].trim(),title:parts2.slice(1).join(' - ').trim()};
   return{artist:'',title:v.title};
 }
-// TV Overlay — 4 phase system with previous video tracking
-let ovTimers=[];let ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false,mid:false};
+// ====== TV OVERLAY SISTĒMA — 6 fāzes ar kolīziju aizsardzību ======
+// Secība: TAGAD SKAN → [MID] → TAGAD SKAN → NĀKAMAIS → crossfade → TIKKO SKANĒJA → (atkārtot)
+let ovTimers=[];
+let ovPhasesDone={now1:false,mid:false,now2:false,next:false,xfade:false};
 let previousVideo=null;
-function resetOverlayPhases(){ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false,mid:false};ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];hideOverlay();hideMidOverlay();resetAgeBadge();const dim=document.getElementById('tvDimOverlay');if(dim)dim.classList.remove('dimming')}
+var overlayBusyUntil=0; // Date.now() kad pēdējais overlay būs beidzies
+const OV_MIN_GAP=5000; // 5s minimālā pauze starp overlay
+const OV_MIN_DUR=5; // 5s minimālais rādīšanas laiks
+function resetOverlayPhases(){
+  ovPhasesDone={now1:false,mid:false,now2:false,next:false,xfade:false};
+  ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];
+  overlayBusyUntil=0;
+  hideOverlay();hideMidOverlay();resetAgeBadge();
+  const dim=document.getElementById('tvDimOverlay');if(dim)dim.classList.remove('dimming');
+}
 function showOverlay(phase,videoData,duration){
   const ov=document.getElementById('tvOverlay');
   const meta=parseVideoMeta(videoData);
   ov.className='tv-overlay phase-'+phase;
-  document.getElementById('tvOvLabel').textContent=phase==='now'?'TAGAD SKAN':'NĀKAMAIS';
+  const labels={now:'TAGAD SKAN',next:'NĀKAMAIS',just:'TIKKO SKANĒJA'};
+  document.getElementById('tvOvLabel').textContent=labels[phase]||'TAGAD SKAN';
   document.getElementById('tvOvTitle').textContent=meta.title;
   document.getElementById('tvOvArtist').textContent=meta.artist;
   document.getElementById('tvOvMeta').textContent='';
-  // Show
+  hideMidOverlay(); // Paslēpt mid overlay ja redzams
   requestAnimationFrame(()=>{ov.classList.add('show')});
-  // Auto-hide
   if(duration>0){const t=setTimeout(()=>{ov.classList.remove('show')},duration*1000);ovTimers.push(t)}
 }
 function hideOverlay(){const ov=document.getElementById('tvOverlay');if(ov)ov.classList.remove('show')}
+// Droša overlay rādīšana ar kolīziju aizsardzību (5s pauze starp overlay)
+function safeShowOverlay(phase,videoData,desiredDur){
+  const now=Date.now();
+  const dur=Math.max(OV_MIN_DUR,desiredDur);
+  if(now>=overlayBusyUntil){
+    showOverlay(phase,videoData,dur);
+    overlayBusyUntil=now+dur*1000+OV_MIN_GAP;
+  }else{
+    const delay=overlayBusyUntil-now;
+    const t=setTimeout(()=>{showOverlay(phase,videoData,dur);overlayBusyUntil=Date.now()+dur*1000+OV_MIN_GAP},delay);
+    ovTimers.push(t);
+  }
+}
+function safeMidOverlay(desiredDur){
+  const now=Date.now();
+  const dur=Math.max(OV_MIN_DUR,desiredDur);
+  if(now>=overlayBusyUntil){
+    showMidOverlay(dur);
+    overlayBusyUntil=now+dur*1000+OV_MIN_GAP;
+  }else{
+    const delay=overlayBusyUntil-now;
+    const t=setTimeout(()=>{showMidOverlay(dur);overlayBusyUntil=Date.now()+dur*1000+OV_MIN_GAP},delay);
+    ovTimers.push(t);
+  }
+}
 // ====== 30+ VECUMA BADGE ======
 var ageBadgeTimers=[];
 var ageBadgeShown={first:false,second:false,third:false};
@@ -2528,13 +2577,17 @@ function startProgressTracker(){
       const remaining=effectiveEnd-c; // Laiks līdz efektīvajām beigām
       const p=(c/effectiveEnd)*100+'%';document.getElementById('npProgressFill').style.width=p;
       const dimOv=document.getElementById('tvDimOverlay');
-      // TAGAD SKAN — backup: ja crossfade taimeris nebija parādījis
-      if(c>=40&&c<60&&!ovPhasesDone.now){ovPhasesDone.now=true;showOverlay('now',v,10)}
-      // MID-SONG PROGRAM — Tagad/Nākošais/Vēlāk dziesmas viduspunktā
+      // ═══ OVERLAY SECĪBA — 6 fāzes ar kolīziju aizsardzību ═══
+      const totalDur=effectiveEnd-(v.trimStart||6);
+      // 1) TAGAD SKAN #1 — ~20s pēc klipa sākuma
+      if(c>=20&&!ovPhasesDone.now1){ovPhasesDone.now1=true;safeShowOverlay('now',v,10)}
+      // 2) MID-SONG PROGRAM — viduspunktā (tikai ja dziesma > 60s)
       const midPoint=effectiveEnd/2;
-      if(c>=midPoint&&c<midPoint+15&&!ovPhasesDone.mid){ovPhasesDone.mid=true;showMidOverlay(10)}
-      // NĀKAMAIS — 40 sek. pirms beigām + preload
-      if(remaining<=40&&remaining>25&&!ovPhasesDone.next){ovPhasesDone.next=true;showOverlay('next',getNextVideoInfo(),8);preloadNext()}
+      if(totalDur>60&&c>=midPoint&&c<midPoint+15&&!ovPhasesDone.mid){ovPhasesDone.mid=true;safeMidOverlay(10)}
+      // 3) TAGAD SKAN #2 — ~60s pirms beigām (tikai ja dziesma > 120s)
+      if(totalDur>120&&remaining<=60&&remaining>45&&!ovPhasesDone.now2){ovPhasesDone.now2=true;safeShowOverlay('now',v,10)}
+      // 4) NĀKAMAIS — ~30s pirms beigām + preload
+      if(remaining<=30&&remaining>20&&!ovPhasesDone.next){ovPhasesDone.next=true;safeShowOverlay('next',getNextVideoInfo(),10);preloadNext()}
       // ═══ CROSSFADE MEHĀNIKA: 21s → 16s → 11s ═══
       // 21s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
       if(remaining<=21&&remaining>16&&!crossfading&&!isMuted){
@@ -2548,12 +2601,12 @@ function startProgressTracker(){
       if(remaining<=16&&remaining>10&&!ovPhasesDone.xfade&&!crossfading){ovPhasesDone.xfade=true;nextVideo()}
       // 10s pirms beigām: No vecā nekas nav palicis (crossfadeTo jau pabeidza fade)
       // ═══ 30+ BADGE — 3x per klipu ═══
-      // 1) 10s pēc TAGAD SKAN (kas parādās ~13s) = ~23s no sākuma
-      if(c>=23&&c<35&&!ageBadgeShown.first){ageBadgeShown.first=true;showAgeBadge(10)}
-      // 2) Vidū — 20s pirms NĀKAMAIS overlay (kas nāk ~40s pirms beigām) = ~60s pirms beigām
-      if(remaining<=65&&remaining>50&&!ageBadgeShown.second){ageBadgeShown.second=true;showAgeBadge(10)}
-      // 3) 25s pirms beigām (pirms crossfade dimming)
-      if(remaining<=30&&remaining>20&&!ageBadgeShown.third){ageBadgeShown.third=true;showAgeBadge(10)}
+      // 1) ~35s no sākuma (pēc pirmā TAGAD SKAN, kas beidzas ~30s)
+      if(c>=35&&c<47&&!ageBadgeShown.first){ageBadgeShown.first=true;showAgeBadge(10)}
+      // 2) ~75s pirms beigām (pirms otrā TAGAD SKAN pie ~60s)
+      if(remaining<=80&&remaining>65&&!ageBadgeShown.second){ageBadgeShown.second=true;showAgeBadge(10)}
+      // 3) ~22s pirms beigām (starp NĀKAMAIS un crossfade dimming)
+      if(remaining<=25&&remaining>18&&!ageBadgeShown.third){ageBadgeShown.third=true;showAgeBadge(10)}
     }catch(e){}
   },500);
 }
