@@ -466,6 +466,25 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .tv-overlay-artist{font-family:'Russo One',var(--font-display),sans-serif;font-size:22px;font-weight:400;color:rgba(200,210,240,0.75);
   white-space:normal;word-wrap:break-word;font-style:normal;letter-spacing:0.3px}
 .tv-overlay-meta{font-family:'Handjet',var(--font-main),sans-serif;font-size:18px;font-weight:500;color:rgba(224,227,255,0.5);letter-spacing:3px;margin-top:4px}
+/* TV Mid-Song Program Overlay — Tagad / Nākošais / Vēlāk */
+.tv-mid-overlay{position:absolute;bottom:80px;left:20px;z-index:14;pointer-events:none;
+  transform:translateX(-110%);opacity:0;transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .5s ease;
+  max-width:560px}
+.tv-mid-overlay.show{transform:translateX(0);opacity:1}
+.tv-mid-overlay-inner{background:rgba(0,0,0,0.55);backdrop-filter:blur(10px);border-left:4px solid var(--neon-purple);
+  padding:12px 20px 10px;border-radius:0 8px 8px 0;
+  box-shadow:0 4px 20px rgba(0,0,0,0.6),0 0 20px rgba(155,77,255,0.12)}
+.tv-mid-row{display:flex;align-items:baseline;gap:12px;padding:5px 0}
+.tv-mid-row+.tv-mid-row{border-top:1px solid rgba(255,255,255,0.06)}
+.tv-mid-label{font-family:'Handjet',var(--font-main),sans-serif;font-size:18px;font-weight:700;letter-spacing:4px;text-transform:uppercase;
+  min-width:110px;flex-shrink:0}
+.tv-mid-label.now{color:var(--neon-purple);text-shadow:0 0 10px rgba(155,77,255,0.6)}
+.tv-mid-label.next{color:var(--electric-blue);text-shadow:0 0 10px rgba(25,208,232,0.5)}
+.tv-mid-label.later{color:rgba(200,210,240,0.45);text-shadow:none}
+.tv-mid-song{font-family:'Russo One',var(--font-display),sans-serif;font-size:18px;font-weight:400;color:#fff;
+  white-space:normal;word-wrap:break-word;line-height:1.3;text-shadow:0 2px 4px rgba(0,0,0,0.8)}
+.tv-mid-row:nth-child(2) .tv-mid-song{color:rgba(200,210,240,0.8);font-size:16px}
+.tv-mid-row:nth-child(3) .tv-mid-song{color:rgba(200,210,240,0.5);font-size:15px}
 /* 30+ vecuma brīdinājums — retro TV stilā */
 .tv-age-badge{position:absolute;bottom:100px;right:20px;z-index:15;pointer-events:none;
   transform:translateX(150%);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s ease}
@@ -1127,6 +1146,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   .tv-overlay{bottom:44px;left:6px;max-width:65%}
   .tv-overlay-inner{padding:8px 14px 6px}
   .tv-overlay-title{font-size:20px}
+  .tv-mid-overlay{bottom:44px;left:6px;max-width:65%}
+  .tv-mid-overlay-inner{padding:8px 12px 6px}
+  .tv-mid-label{font-size:13px;letter-spacing:2px;min-width:80px}
+  .tv-mid-song{font-size:13px!important}
   .tv-age-badge{bottom:50px;right:8px}
   .tv-age-badge-inner{font-size:10px}
   .tv-overlay-artist{font-size:15px}
@@ -1668,6 +1691,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
             <div class="tv-overlay-meta" id="tvOvMeta"></div>
           </div>
         </div>
+        <!-- TV Mid-Song Program — Tagad / Nākošais / Vēlāk -->
+        <div class="tv-mid-overlay" id="tvMidOverlay">
+          <div class="tv-mid-overlay-inner">
+            <div class="tv-mid-row"><span class="tv-mid-label now">TAGAD</span><span class="tv-mid-song" id="tvMidNow">—</span></div>
+            <div class="tv-mid-row"><span class="tv-mid-label next">NĀKOŠAIS</span><span class="tv-mid-song" id="tvMidNext">—</span></div>
+            <div class="tv-mid-row"><span class="tv-mid-label later">VĒLĀK</span><span class="tv-mid-song" id="tvMidLater">—</span></div>
+          </div>
+        </div>
         <!-- 30+ vecuma brīdinājums — retro TV stilā -->
         <div class="tv-age-badge" id="tvAgeBadge"><div class="tv-age-badge-inner">30+</div></div>
         <div class="screen-progress"><div class="screen-progress-fill" id="npProgressFill"></div></div>
@@ -1980,8 +2011,8 @@ function sheetsToChannels(rows){
     const album=row['Albums']||row['album']||'';
     const year=parseInt(row['Gads']||row['year'])||0;
     const duration=parseInt(row['Garums']||row['duration'])||240;
-    const trimStart=parseInt(row['Trim Start']||row['trim_start'])||5;
-    const trimEnd=parseInt(row['Trim End']||row['trim_end'])||10;
+    const trimStart=parseInt(row['Trim Start']||row['trim_start'])||6;
+    const trimEnd=parseInt(row['Trim End']||row['trim_end'])||11;
     // Era automātiski pēc gada: ≤1989=vintage, 1990-2000=vcr, 2001+=modern
     const era=year>0?(year<=1989?'vintage':year<=2000?'vcr':'modern'):'modern';
     const video={id,title:artist+' — '+song,artist,song,album,year,decade:era,duration,trimStart,trimEnd};
@@ -2033,8 +2064,8 @@ function supabaseToChannels(songs){
       album:song.album||'',
       year:year,
       duration:song.duration_sec||240,
-      trimStart:song.trim_start??5,
-      trimEnd:song.trim_end??10
+      trimStart:song.trim_start??6,
+      trimEnd:song.trim_end??11
     };
     const genre=(song.genre1||'').toLowerCase().trim();
     // 1) Pēc gada: Vecie (līdz 1999) / Jaunie (no 2000)
@@ -2158,7 +2189,7 @@ function clearWatchdog(){clearTimeout(watchdogTimer);lastWatchdogVideoId=null}
 // ═══════════════════════════════════════
 // Katram kanālam: efektīvais garums = duration - trimStart - trimEnd
 // Unix timestamp % totalDuration → pozīcija playlistā → dziesma + seekTo
-function getEffectiveDuration(v){return Math.max(30,(v.duration||240)-(v.trimStart||5)-(v.trimEnd||10))}
+function getEffectiveDuration(v){return Math.max(30,(v.duration||240)-(v.trimStart||6)-(v.trimEnd||11))}
 function getChannelTotalDuration(chIdx){
   return channels[chIdx].videos.reduce((sum,v)=>sum+getEffectiveDuration(v),0);
 }
@@ -2171,10 +2202,10 @@ function getLivePosition(chIdx){
   let pos=now%total;
   for(let i=0;i<vids.length;i++){
     const eDur=getEffectiveDuration(vids[i]);
-    if(pos<eDur)return{videoIdx:i,seekTo:pos+(vids[i].trimStart||5)};
+    if(pos<eDur)return{videoIdx:i,seekTo:pos+(vids[i].trimStart||6)};
     pos-=eDur;
   }
-  return{videoIdx:0,seekTo:vids[0].trimStart||5};
+  return{videoIdx:0,seekTo:vids[0].trimStart||6};
 }
 // Inicializē visus kanālus uz pseudo-live pozīciju
 function syncAllChannels(){
@@ -2236,7 +2267,7 @@ window.onYouTubeIframeAPIReady=function(){
   const live=getLivePosition(currentChannel);
   currentVideoIdx[currentChannel]=live.videoIdx;
   const v=channels[currentChannel].videos[live.videoIdx];
-  const trimE=v.trimEnd||10,dur=v.duration||0;
+  const trimE=v.trimEnd||11,dur=v.duration||0;
   // Slot A — pirmais aktīvais player, seekTo uz live pozīciju
   playerA=new YT.Player('yt-slot-a',{
     videoId:v.id,
@@ -2291,7 +2322,7 @@ function preloadNext(){
   const nextPlayer=nextSlot==='a'?playerA:playerB;
   const nextReady=nextSlot==='a'?playerAReady:playerBReady;
   if(!nextPlayer||!nextReady)return;
-  const trimS=nextV.trimStart||5,trimE=nextV.trimEnd||10,dur=nextV.duration||0;
+  const trimS=nextV.trimStart||6,trimE=nextV.trimEnd||11,dur=nextV.duration||0;
   const opts={videoId:nextV.id,startSeconds:trimS};
   if(dur>trimE)opts.endSeconds=dur-trimE;
   try{
@@ -2308,7 +2339,7 @@ function crossfadeTo(v){
   // Saglabā pašreizējo dziesmu kā "iepriekšējo" pirms pārslēgšanas
   try{previousVideo=channels[currentChannel].videos[currentVideoIdx[currentChannel]]}catch(e){previousVideo=null}
   crossfading=true;
-  const trimS=v.trimStart||5,trimE=v.trimEnd||10,dur=v.duration||0;
+  const trimS=v.trimStart||6,trimE=v.trimEnd||11,dur=v.duration||0;
   const opts={videoId:v.id,startSeconds:trimS};
   if(dur>trimE)opts.endSeconds=dur-trimE;
   // Kurš ir nākamais slots?
@@ -2371,7 +2402,7 @@ function playVideoLive(v,seekTo){
   // Bez crossfade, ar seekTo uz pseudo-live pozīciju
   if(!playerReady)return;
   crossfading=false;clearInterval(crossfadeTimer);preloadedVideoId=null;
-  const trimE=v.trimEnd||10,dur=v.duration||0;
+  const trimE=v.trimEnd||11,dur=v.duration||0;
   const opts={videoId:v.id,startSeconds:seekTo};
   if(dur>trimE)opts.endSeconds=dur-trimE;
   const currPlayer=activeSlot==='a'?playerA:playerB;
@@ -2385,7 +2416,7 @@ function playVideoHard(v){
   // Bez crossfade — tūlītēja pārslēgšana (kanāla maiņa ar static)
   if(!playerReady)return;
   crossfading=false;clearInterval(crossfadeTimer);preloadedVideoId=null;
-  const trimS=v.trimStart||5,trimE=v.trimEnd||10,dur=v.duration||0;
+  const trimS=v.trimStart||6,trimE=v.trimEnd||11,dur=v.duration||0;
   const opts={videoId:v.id,startSeconds:trimS};
   if(dur>trimE)opts.endSeconds=dur-trimE;
   const currPlayer=activeSlot==='a'?playerA:playerB;
@@ -2421,6 +2452,10 @@ function getNextVideoInfo(){
   const ch=currentChannel,nextIdx=(currentVideoIdx[ch]+1)%channels[ch].videos.length;
   return channels[ch].videos[nextIdx];
 }
+function getAfterNextVideoInfo(){
+  const ch=currentChannel,afterIdx=(currentVideoIdx[ch]+2)%channels[ch].videos.length;
+  return channels[ch].videos[afterIdx];
+}
 function parseVideoMeta(v){
   // Parse "Artist — Title" format, or just use title
   const parts=v.title.split(' — ');
@@ -2430,9 +2465,9 @@ function parseVideoMeta(v){
   return{artist:'',title:v.title};
 }
 // TV Overlay — 4 phase system with previous video tracking
-let ovTimers=[];let ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false};
+let ovTimers=[];let ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false,mid:false};
 let previousVideo=null;
-function resetOverlayPhases(){ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false};ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];hideOverlay();resetAgeBadge();const dim=document.getElementById('tvDimOverlay');if(dim)dim.classList.remove('dimming')}
+function resetOverlayPhases(){ovPhasesDone={now:false,next:false,just:false,xfade:false,newNow:false,mid:false};ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];hideOverlay();hideMidOverlay();resetAgeBadge();const dim=document.getElementById('tvDimOverlay');if(dim)dim.classList.remove('dimming')}
 function showOverlay(phase,videoData,duration){
   const ov=document.getElementById('tvOverlay');
   const meta=parseVideoMeta(videoData);
@@ -2453,6 +2488,19 @@ var ageBadgeShown={first:false,second:false,third:false};
 function resetAgeBadge(){ageBadgeShown={first:false,second:false,third:false};ageBadgeTimers.forEach(t=>clearTimeout(t));ageBadgeTimers=[];hideAgeBadge()}
 function showAgeBadge(dur){const b=document.getElementById('tvAgeBadge');if(!b)return;b.classList.add('show');const t=setTimeout(()=>{b.classList.remove('show')},dur*1000);ageBadgeTimers.push(t)}
 function hideAgeBadge(){const b=document.getElementById('tvAgeBadge');if(b)b.classList.remove('show')}
+// ====== MID-SONG PROGRAM OVERLAY — Tagad / Nākošais / Vēlāk ======
+function showMidOverlay(dur){
+  const ov=document.getElementById('tvMidOverlay');if(!ov)return;
+  const ch=currentChannel,v=channels[ch].videos[currentVideoIdx[ch]];
+  const nextV=getNextVideoInfo(),afterV=getAfterNextVideoInfo();
+  const mNow=parseVideoMeta(v),mNext=parseVideoMeta(nextV),mAfter=parseVideoMeta(afterV);
+  document.getElementById('tvMidNow').textContent=mNow.artist?(mNow.artist+' — '+mNow.title):mNow.title;
+  document.getElementById('tvMidNext').textContent=mNext.artist?(mNext.artist+' — '+mNext.title):mNext.title;
+  document.getElementById('tvMidLater').textContent=mAfter.artist?(mAfter.artist+' — '+mAfter.title):mAfter.title;
+  requestAnimationFrame(()=>{ov.classList.add('show')});
+  if(dur>0){const t=setTimeout(()=>{ov.classList.remove('show')},dur*1000);ovTimers.push(t)}
+}
+function hideMidOverlay(){const ov=document.getElementById('tvMidOverlay');if(ov)ov.classList.remove('show')}
 function updateNowPlaying(){
   const ch=channels[currentChannel],v=ch.videos[currentVideoIdx[currentChannel]];
   const npt=document.getElementById('npText'),npc=document.getElementById('npCh');
@@ -2475,26 +2523,29 @@ function startProgressTracker(){
       const d=ap.getDuration(),c=ap.getCurrentTime();
       if(d<=0)return;
       const v=channels[currentChannel].videos[currentVideoIdx[currentChannel]];
-      const trimE=v.trimEnd||10;
+      const trimE=v.trimEnd||11;
       const effectiveEnd=d>trimE?d-trimE:d; // endSeconds — kur playeris apstāsies
       const remaining=effectiveEnd-c; // Laiks līdz efektīvajām beigām
       const p=(c/effectiveEnd)*100+'%';document.getElementById('npProgressFill').style.width=p;
       const dimOv=document.getElementById('tvDimOverlay');
       // TAGAD SKAN — backup: ja crossfade taimeris nebija parādījis
       if(c>=40&&c<60&&!ovPhasesDone.now){ovPhasesDone.now=true;showOverlay('now',v,10)}
+      // MID-SONG PROGRAM — Tagad/Nākošais/Vēlāk dziesmas viduspunktā
+      const midPoint=effectiveEnd/2;
+      if(c>=midPoint&&c<midPoint+15&&!ovPhasesDone.mid){ovPhasesDone.mid=true;showMidOverlay(10)}
       // NĀKAMAIS — 40 sek. pirms beigām + preload
       if(remaining<=40&&remaining>25&&!ovPhasesDone.next){ovPhasesDone.next=true;showOverlay('next',getNextVideoInfo(),8);preloadNext()}
-      // ═══ JAUNA CROSSFADE MEHĀNIKA: 20s → 15s → 10s ═══
-      // 20s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
-      if(remaining<=20&&remaining>15&&!crossfading&&!isMuted){
+      // ═══ CROSSFADE MEHĀNIKA: 21s → 16s → 11s ═══
+      // 21s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
+      if(remaining<=21&&remaining>16&&!crossfading&&!isMuted){
         if(dimOv&&!dimOv.classList.contains('dimming'))dimOv.classList.add('dimming');
-        const fadeProgress=(remaining-15)/5; // 1.0 pie 20s → 0.0 pie 15s
+        const fadeProgress=(remaining-16)/5; // 1.0 pie 21s → 0.0 pie 16s
         const fadeVol=Math.round(currentVolume*(0.4+0.6*fadeProgress));
         try{ap.setVolume(fadeVol)}catch(e){}
       }
-      // 15s pirms beigām: Jaunais klips parādās — crossfade sākas
+      // 16s pirms beigām: Jaunais klips parādās — crossfade sākas
       // Jaunais redzams un sāk skanēt klusām, vecais vēl skan bet paslēpts
-      if(remaining<=15&&remaining>10&&!ovPhasesDone.xfade&&!crossfading){ovPhasesDone.xfade=true;nextVideo()}
+      if(remaining<=16&&remaining>10&&!ovPhasesDone.xfade&&!crossfading){ovPhasesDone.xfade=true;nextVideo()}
       // 10s pirms beigām: No vecā nekas nav palicis (crossfadeTo jau pabeidza fade)
       // ═══ 30+ BADGE — 3x per klipu ═══
       // 1) 10s pēc TAGAD SKAN (kas parādās ~13s) = ~23s no sākuma
