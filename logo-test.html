@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JAFFA Logo — 2 varianti</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gveret+Levin&display=swap" rel="stylesheet">
+<style>
+:root{--neon-purple:#9b4dff;--hot-pink:#ff006e;--electric-blue:#19d0e8;--neon-green:#35ed7e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px;font-family:'Press Start 2P',monospace;overflow:hidden}
+.label{color:#fff;font-size:14px;text-align:center;letter-spacing:2px;margin-bottom:-20px;opacity:0.7}
+.label em{color:#ff0;font-style:normal}
+.row{display:flex;gap:80px;align-items:center;justify-content:center;flex-wrap:wrap}
+
+/* ═══ Shared logo styles ═══ */
+.logo-3d{display:block;position:relative;z-index:2;text-align:center;width:fit-content}
+.logo-3d h1,.logo-3d .logo-copy{
+  font-family:'Lilita One','Bowlby One SC',cursive;font-size:clamp(48px,12vw,100px);line-height:1;
+  text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000;
+  display:block;margin:0;padding:0;letter-spacing:2px;white-space:nowrap}
+.logo-3d .logo-copy{position:absolute;top:0;left:0}
+.logo-3d h1{color:var(--neon-purple);z-index:50;
+  text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)}
+.logo-copy-1{transform:perspective(500px) translate3d(0,0,-15px);color:var(--hot-pink);z-index:40}
+.logo-copy-2{transform:perspective(500px) translate3d(0,0,-30px);color:var(--electric-blue);z-index:30}
+.logo-copy-3{transform:perspective(500px) translate3d(0,0,-45px);color:var(--neon-green);z-index:20}
+
+.logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:clamp(28px,5vw,48px);font-weight:400;color:#d9fdff;letter-spacing:2px;
+  position:absolute;top:-0.15em;right:-0.15em;z-index:51;
+  display:inline-block;transform:rotate(-10deg);
+  text-shadow:0 0 7px #00f0ff,0 0 15px #00f0ff,0 0 30px rgba(0,115,255,0.5)}
+</style>
+</head>
+<body>
+
+<div class="label">⬅ A: BEZ PĒDĒJĀ SLĀŅA (noņemts <em>copy-3</em> / zaļais aizmugurē) &nbsp;&nbsp;&nbsp; B: BEZ PIRMĀ SLĀŅA (noņemts <em>h1</em> / violetais priekšā) ➡</div>
+
+<div class="row">
+  <!-- ═══ VARIANT A: bez pēdējā (copy-3 noņemts) ═══ -->
+  <div class="logo-3d" id="logoA">
+    <h1>JAFFA</h1>
+    <span aria-hidden="true" class="logo-copy logo-copy-1">JAFFA</span>
+    <span aria-hidden="true" class="logo-copy logo-copy-2">JAFFA</span>
+    <!-- copy-3 NOŅEMTS -->
+    <span class="logo-dot-tv">.tv</span>
+  </div>
+
+  <!-- ═══ VARIANT B: bez pirmā (h1 noņemts, copy-1 kļūst par galveno) ═══ -->
+  <div class="logo-3d" id="logoB">
+    <!-- h1 NOŅEMTS — copy-1 tagad ir priekšējais -->
+    <span class="logo-copy logo-copy-1" style="position:relative;z-index:50;text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 0 20px var(--hot-pink),0 0 40px rgba(255,0,110,0.4)">JAFFA</span>
+    <span aria-hidden="true" class="logo-copy logo-copy-2">JAFFA</span>
+    <span aria-hidden="true" class="logo-copy logo-copy-3">JAFFA</span>
+    <span class="logo-dot-tv">.tv</span>
+  </div>
+</div>
+
+<div class="label" style="font-size:10px;opacity:0.4">Pakustini peli pāri logotipiem lai redzētu 3D efektu</div>
+
+<script>
+/* ═══ 3D perspective animation — tāds pats kā jaffa.tv ═══ */
+function init3D(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const copies = container.getElementsByClassName('logo-copy');
+
+  function newV2(x, y) { return { x: x || 0, y: y || 0 } }
+  function lerpV2(pos, target) { pos.x += (target.x - pos.x) * 0.2; pos.y += (target.y - pos.y) * 0.2 }
+
+  const center = newV2(), distFromCenter = newV2(), distLerped = newV2();
+  let simulating = true;
+  const perspective = 500, translateZ = -12, rotate = 3, skew = 3;
+
+  function updateCenter() {
+    const r = container.getBoundingClientRect();
+    center.x = r.left + r.width / 2; center.y = r.top + r.height / 2;
+  }
+
+  document.addEventListener('mousemove', function(e) {
+    simulating = false;
+    distFromCenter.x = center.x - e.clientX;
+    distFromCenter.y = center.y - e.clientY;
+  }, { passive: true });
+
+  function fakeMouse(t) {
+    distFromCenter.x = Math.sin(t / 500) * window.innerWidth * 0.5;
+    distFromCenter.y = Math.cos(t / 500) * window.innerWidth * 0.2;
+  }
+
+  function tick(t) {
+    if (simulating) fakeMouse(t);
+    lerpV2(distLerped, distFromCenter);
+    for (let i = 0; i < copies.length; i++) {
+      const d = i + 1;
+      copies[i].style.transform = `perspective(${perspective}px) translate3d(0px,${d * distLerped.y * 0.03}px,${d * translateZ}px) rotate(${d * rotate * (distLerped.x * 0.003)}deg) skew(${d * skew * (distLerped.x * 0.003)}deg)`;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  updateCenter();
+  window.addEventListener('resize', updateCenter, { passive: true });
+  requestAnimationFrame(tick);
+}
+
+/* ═══ Randomize colors (same as jaffa.tv) ═══ */
+function randomizeColors(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const colors = ['var(--neon-purple)', 'var(--hot-pink)', 'var(--electric-blue)', 'var(--neon-green)'];
+  for (let i = colors.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [colors[i], colors[j]] = [colors[j], colors[i]] }
+  const glows = {
+    'var(--neon-purple)': '0 0 20px var(--neon-purple),0 0 40px rgba(155,77,255,0.4)',
+    'var(--hot-pink)': '0 0 20px var(--hot-pink),0 0 40px rgba(255,0,110,0.4)',
+    'var(--electric-blue)': '0 0 20px var(--electric-blue),0 0 40px rgba(25,208,232,0.4)',
+    'var(--neon-green)': '0 0 20px var(--neon-green),0 0 40px rgba(53,237,126,0.4)'
+  };
+  const h1 = container.querySelector('h1');
+  if (h1) { h1.style.color = colors[0]; h1.style.textShadow = '-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,' + (glows[colors[0]] || '') }
+  const copies = container.querySelectorAll('.logo-copy');
+  copies.forEach((c, i) => { if (colors[i + 1]) c.style.color = colors[i + 1] });
+}
+
+randomizeColors('logoA');
+randomizeColors('logoB');
+init3D('logoA');
+init3D('logoB');
+</script>
+</body>
+</html>

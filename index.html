@@ -294,19 +294,20 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 @keyframes vhsGlitchFlash{0%,92%,100%{opacity:0}93%{opacity:1}94%{opacity:0}96%{opacity:1}97%{opacity:0}}
 
 /* ═══ CHANNEL-BASED VISUAL STYLES ═══ */
-/* VECIE — VHS/VCR efekts pie 50% intensitātes */
-.tv-screen.ch-style-vhs .yt-slot{filter:saturate(0.7) contrast(1.05) brightness(0.92) sepia(0.03);transition:filter .8s ease}
-.tv-screen.ch-style-vhs .era-overlay-vcr{opacity:0.5;animation:vcrNoise .12s steps(1) infinite}
-.tv-screen.ch-style-vhs .era-overlay-vcr-chroma{opacity:0.5}
-.tv-screen.ch-style-vhs .era-overlay-vcr-band{opacity:0.5;animation:vcrBandDrift 6s linear infinite}
-.tv-screen.ch-style-vhs .era-overlay-vcr-grain{opacity:0.4;animation:vhsGrain .1s steps(1) infinite}
-.tv-screen.ch-style-vhs .era-overlay-vcr-glitch{animation:vhsGlitchFlash 8s ease-in-out infinite}
-/* JAUNIE — tīrs, bez efektiem */
+/* VECIE — VHS/VCR efekts pie 25% intensitātes (puse no iepriekšējā) */
+.tv-screen.ch-style-vhs .yt-slot{filter:saturate(0.85) contrast(1.02) brightness(0.96) sepia(0.015);transition:filter .8s ease}
+.tv-screen.ch-style-vhs .era-overlay-vcr{opacity:0.25;animation:vcrNoise .12s steps(1) infinite}
+.tv-screen.ch-style-vhs .era-overlay-vcr-chroma{opacity:0.25}
+.tv-screen.ch-style-vhs .era-overlay-vcr-band{opacity:0.25;animation:vcrBandDrift 6s linear infinite}
+.tv-screen.ch-style-vhs .era-overlay-vcr-grain{opacity:0.2;animation:vhsGrain .1s steps(1) infinite}
+.tv-screen.ch-style-vhs .era-overlay-vcr-glitch{opacity:0.5;animation:vhsGlitchFlash 8s ease-in-out infinite}
+/* JAUNIE — tīrs, bez jebkādiem filtriem */
 .tv-screen.ch-style-clean .yt-slot{filter:none;transition:filter .8s ease}
-/* Pārējie kanāli — LOMO efekts: viegla desaturācija + vinjete stūros */
-.tv-screen.ch-style-lomo .yt-slot{filter:saturate(0.9) contrast(1.05) brightness(0.96);transition:filter .8s ease}
+.tv-screen.ch-style-clean .scanlines{opacity:0}
+/* Pārējie 4 kanāli — viegla vinjete stūros + saturācija -20% */
+.tv-screen.ch-style-lomo .yt-slot{filter:saturate(0.8) contrast(1.02) brightness(0.98);transition:filter .8s ease}
 .tv-screen.ch-style-lomo .era-overlay-vintage{opacity:1;
-  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)}
+  background:radial-gradient(ellipse at center, transparent 65%, rgba(0,0,0,0.18) 100%)}
 
 /* SCREEN OVERLAYS */
 @keyframes logoPulse{0%,100%{text-shadow:0 0 8px var(--neon-green),0 0 16px rgba(0,255,65,0.4)}50%{text-shadow:0 0 14px var(--neon-green),0 0 28px rgba(0,255,65,0.7)}}
@@ -1815,6 +1816,23 @@ const SUPABASE_URL = 'https://swamlervnowkokqmnwgl.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3YW1sZXJ2bm93a29rcW1ud2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjE1NDksImV4cCI6MjA4ODE5NzU0OX0.NaBULm_Z77mq2-vkqugNblaKneCS2gx0cLNGH_vL18k';
 const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ===== MŪZIĶU FAKTI =====
+let artistFacts={};  // { "Michael Jackson": ["Fact 1","Fact 2"], ... }
+async function loadArtistFacts(){
+  const{data}=await _sb.from('artist_facts').select('artist,artist2,fact_text');
+  if(!data)return;
+  artistFacts={};
+  data.forEach(f=>{
+    const a=f.artist;
+    if(!artistFacts[a])artistFacts[a]=[];
+    artistFacts[a].push(f.fact_text);
+    if(f.artist2){
+      if(!artistFacts[f.artist2])artistFacts[f.artist2]=[];
+      artistFacts[f.artist2].push(f.fact_text);
+    }
+  });
+}
+
 // Genre → kanāla mapping (Supabase genre1 → kanāla key)
 const GENRE_CHANNEL_MAP = {
   // Pop/Rock
@@ -2001,14 +2019,18 @@ let cmsLoaded=false;
 // jaffa.tv/arzemju/pop → atver Pop/Rock kanālu
 const CHANNEL_SLUGS={vecie:0,jaunie:1,pop:2,poprock:2,rock:2,dance:3,hiphop:4,rap:4,funk:4,hipster:5};
 const CHANNEL_SLUG_NAMES=['vecie','jaunie','pop','dance','hiphop','hipster'];
+let _startInChill=false; // Vai URL norādīja uz CHILL — aktivizēs pēc init
 // Nolasa kanālu no URL path (pēdējais segments) vai hash (fallback)
 function getChannelFromURL(){
   // 1) Vispirms mēģinam pathname: /arzemju/pop → "pop"
   const parts=location.pathname.replace(/\/$/,'').split('/');
   const last=(parts[parts.length-1]||'').toLowerCase();
+  // CHILL režīms — /arzemju/chill vai /chill
+  if(last==='chill'){_startInChill=true;return 0;}
   if(last&&last!=='arzemju'&&CHANNEL_SLUGS.hasOwnProperty(last))return CHANNEL_SLUGS[last];
-  // 2) Fallback uz hash: #pop
+  // 2) Fallback uz hash: #chill vai #pop
   const h=location.hash.replace('#','').toLowerCase().trim();
+  if(h==='chill'){_startInChill=true;return 0;}
   if(h&&CHANNEL_SLUGS.hasOwnProperty(h))return CHANNEL_SLUGS[h];
   // 3) Random
   return Math.floor(Math.random()*6);
@@ -2123,20 +2145,19 @@ function buildChannelGrid(){
 }
 buildChannelGrid();
 
-/* ═══ JAFFA logo — randomizēt krāsu secību katram apmeklējumam (6 slāņi) ═══ */
-(function(){
-  const allColors=CHANNEL_NEON_COLORS.map(c=>c.css);
-  // Shuffle: random pirmais, pārējie arī sajaukti
-  for(let i=allColors.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[allColors[i],allColors[j]]=[allColors[j],allColors[i]]}
-  const glowMap={};CHANNEL_NEON_COLORS.forEach(c=>{glowMap[c.css]=c.glow});
+/* ═══ JAFFA logo — unikālas krāsas visos slāņos (arī pēc kanāla pārslēgšanas) ═══ */
+function updateLogoColors(activeIdx){
   const copies=document.querySelectorAll('.logo-3d .logo-copy');
-  copies.forEach((c,i)=>{
-    if(allColors[i]){
-      c.style.color=allColors[i];
-      if(i===0) c.style.textShadow='-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,'+(glowMap[allColors[i]]||'');
-    }
-  });
-})();
+  if(!copies.length)return;
+  const active=CHANNEL_NEON_COLORS[activeIdx]||CHANNEL_NEON_COLORS[0];
+  const rest=CHANNEL_NEON_COLORS.filter((_,i)=>i!==activeIdx);
+  // Priekšējais slānis = aktīvā kanāla krāsa + glow
+  copies[0].style.color=active.css;
+  copies[0].style.textShadow='-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,'+active.glow;
+  // Pārējie 5 slāņi = atlikušās 5 krāsas (bez aktīvās)
+  for(let i=1;i<copies.length&&i-1<rest.length;i++){copies[i].style.color=rest[i-1].css}
+}
+updateLogoColors(currentChannel||0);
 /* ═══ 3D perspective logo — rachsmith.com effect (GPU-composited) ═══ */
 (function(){
   const container=document.getElementById('logo3d');
@@ -2213,6 +2234,7 @@ function startTV(){
   },600);
 }
 // Ielādē CMS datus sākuma ekrāna laikā, tad startē TV
+loadArtistFacts(); // Ielādēt mūziķu faktus paralēli
 loadFromSupabase('arzemju').then(loaded=>{
   if(loaded){
     syncAllChannels();
@@ -2226,12 +2248,8 @@ loadFromSupabase('arzemju').then(loaded=>{
   }
   // ═══ Landing page — kanāla krāsa uz logo, teksta, play pogas ═══
   const neon=CHANNEL_NEON_COLORS[currentChannel]||CHANNEL_NEON_COLORS[0];
-  // Logo priekšējais slānis — kanāla krāsā
-  const frontCopy=document.querySelector('.logo-3d .logo-copy-1');
-  if(frontCopy){
-    frontCopy.style.color=neon.css;
-    frontCopy.style.textShadow='-0.35px -0.35px 0 #000,0.35px -0.35px 0 #000,-0.35px 0.35px 0 #000,0.35px 0.35px 0 #000,'+neon.glow;
-  }
+  // Logo — visi slāņi ar unikālām krāsām
+  updateLogoColors(currentChannel);
   // Play poga + label + trijstūris — viss caur --start-btn-rgb CSS custom property
   const startBtn=document.getElementById('startBtn');
   if(startBtn){
@@ -2261,6 +2279,8 @@ window.onYouTubeIframeAPIReady=function(){
       onReady:(e)=>{playerAReady=true;playerReady=true;player=playerA;activeSlot='a';
         e.target.playVideo();updateNowPlaying();setVolume(80);setupSlot(playerA,'a');
         applyChannelStyle(currentChannel);applyChannelColor(currentChannel);
+        // Auto-start CHILL ja URL bija /chill vai /arzemju/chill
+        if(_startInChill){_startInChill=false;setTimeout(()=>{const gb=document.getElementById('gamePanelBtn');if(gb&&!gameRunning){lastMusicChannel=currentChannel;document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));gb.classList.add('active');showStatic(()=>{startGame()})}},800)}
       },
       onStateChange:(e)=>{
         if(activeSlot==='a'){
@@ -2463,13 +2483,13 @@ function parseVideoMeta(v){
 // ====== TV OVERLAY SISTĒMA — 7 fāzes ar kolīziju aizsardzību ======
 // Secība: NOW#0(25s) → NOW#1(45s) → [MID](vidū) → NOW#2(75s pirms) → NĀKAMAIS(65s pirms) → TIKKO(25s pirms) → crossfade(21s pirms)
 let ovTimers=[];
-let ovPhasesDone={now0:false,now1:false,mid:false,now2:false,next:false,just:false,xfade:false};
+let ovPhasesDone={now0:false,now1:false,mid:false,now2:false,next:false,just:false,xfade:false,fact:false};
 var overlayBusyUntil=0; // Date.now() kad pēdējais overlay būs beidzies
 var channelEnteredAt=0; // Laiks kad kanāls tika IESLĒGTS/PĀRSLĒGTS — 20s grace period (tikai kanāla maiņai, ne auto-transition)
 const OV_MIN_GAP=5000; // 5s minimālā pauze starp overlay
 const OV_MIN_DUR=5; // 5s minimālais rādīšanas laiks
 function resetOverlayPhases(){
-  ovPhasesDone={now0:false,now1:false,mid:false,now2:false,next:false,just:false,xfade:false};
+  ovPhasesDone={now0:false,now1:false,mid:false,now2:false,next:false,just:false,xfade:false,fact:false};
   ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];
   overlayBusyUntil=0;
   hideOverlay();hideMidOverlay();resetAgeBadge();
@@ -2489,6 +2509,19 @@ function showOverlay(phase,videoData,duration){
   if(duration>0){const t=setTimeout(()=>{ov.classList.remove('show')},duration*1000);ovTimers.push(t)}
 }
 function hideOverlay(){const ov=document.getElementById('tvOverlay');if(ov)ov.classList.remove('show')}
+// ====== FAKTA OVERLAY — izskatās tieši kā dziesmu overlay ======
+function showFactOverlay(factText,duration){
+  const ov=document.getElementById('tvOverlay');
+  ov.className='tv-overlay phase-now';
+  document.getElementById('tvOvLabel').textContent='\u{1F4A1} VAI TU ZIN\u0100JI?';
+  document.getElementById('tvOvTitle').textContent=factText;
+  document.getElementById('tvOvArtist').textContent='';
+  document.getElementById('tvOvMeta').textContent='';
+  hideMidOverlay();
+  requestAnimationFrame(()=>{ov.classList.add('show')});
+  overlayBusyUntil=Date.now()+duration*1000+OV_MIN_GAP;
+  if(duration>0){const t=setTimeout(()=>{ov.classList.remove('show')},duration*1000);ovTimers.push(t)}
+}
 // Droša overlay rādīšana ar kolīziju aizsardzību (5s pauze starp overlay)
 function safeShowOverlay(phase,videoData,desiredDur){
   const now=Date.now();
@@ -2590,6 +2623,36 @@ function startProgressTracker(){
       if(remaining<=65&&remaining>50&&!ovPhasesDone.next){if(graceOk){ovPhasesDone.next=true;safeShowOverlay('next',getNextVideoInfo(),10)}else{ovPhasesDone.next=true};preloadNext()}
       // 5) TIKKO SKANĒJA — ~25s pirms beigām (pašreizējā dziesma, +10s, pirms crossfade@21s)
       if(remaining<=25&&remaining>15&&!ovPhasesDone.just){if(graceOk){ovPhasesDone.just=true;safeShowOverlay('just',v,10)}else{ovPhasesDone.just=true}}
+      // ═══ FAKTA OVERLAY — starp fāzēm, ja ir ≥30s pauze ═══
+      if(!ovPhasesDone.fact&&graceOk){
+        const nowMs=Date.now();
+        // Vai ir pagājis pietiekami ilgs laiks kopš pēdējā overlay?
+        if(nowMs>=overlayBusyUntil+10000){ // 10s pēc pēdējā overlay beigām
+          // Aprēķināt nākamā overlay trigger laiku (sekundēs no klipa sākuma)
+          const triggers=[];
+          if(!ovPhasesDone.now0)triggers.push(25);
+          if(!ovPhasesDone.now1)triggers.push(45);
+          if(totalDur>60&&!ovPhasesDone.mid)triggers.push(midPoint);
+          if(totalDur>120&&!ovPhasesDone.now2)triggers.push(effectiveEnd-75);
+          if(!ovPhasesDone.next)triggers.push(effectiveEnd-65);
+          if(!ovPhasesDone.just)triggers.push(effectiveEnd-25);
+          if(!ovPhasesDone.xfade)triggers.push(effectiveEnd-21);
+          const nextTrigger=triggers.filter(t=>t>c).sort((a,b)=>a-b)[0];
+          const secUntilNext=nextTrigger!==undefined?(nextTrigger-c):remaining;
+          // Vajag vismaz 30s — 10s fakts + 10s pirms nākamā + 10s buferis
+          if(secUntilNext>=30){
+            const meta=parseVideoMeta(v);
+            const facts=artistFacts[meta.artist];
+            if(facts&&facts.length>0){
+              // Fakta ilgums: max(10, secUntilNext-20) — bet ne vairāk kā 15s
+              const factDur=Math.min(15,Math.max(10,secUntilNext-20));
+              showFactOverlay(facts[Math.floor(Math.random()*facts.length)],factDur);
+              showAgeBadge(factDur);
+              ovPhasesDone.fact=true;
+            }
+          }
+        }
+      }
       // ═══ CROSSFADE MEHĀNIKA: 26s → 21s → 12s ═══
       // 26s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
       if(remaining<=26&&remaining>21&&!crossfading&&!isMuted){
@@ -2639,8 +2702,16 @@ function switchChannel(ch){
 window.addEventListener('popstate',(e)=>{
   if(_urlFromCode){_urlFromCode=false;return}
   // Nolasām kanālu no jaunā URL
+  _startInChill=false;
   const ch=getChannelFromURL();
-  if(ch!==currentChannel&&isPoweredOn)switchChannel(ch);
+  if(_startInChill&&!gameRunning&&isPoweredOn){
+    lastMusicChannel=currentChannel;const gb=document.getElementById('gamePanelBtn');
+    document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));
+    if(gb)gb.classList.add('active');showStatic(()=>{startGame()});
+  }else if(!_startInChill&&gameRunning){
+    stopGame();const gb=document.getElementById('gamePanelBtn');if(gb)gb.classList.remove('active');
+    switchChannel(ch);
+  }else if(ch!==currentChannel&&isPoweredOn)switchChannel(ch);
 });
 function changeChannel(dir){
   let n=currentChannel+dir;
@@ -2736,12 +2807,13 @@ document.getElementById('gamePanelBtn').addEventListener('click',function(){
     // Izslēgt spēli — atgriezties uz mūziku
     stopGame();
     this.classList.remove('active');
-    switchChannel(lastMusicChannel||0);
+    switchChannel(lastMusicChannel||0); // updateURL notiks switchChannel iekšā
   }else{
     // Ieslēgt spēli
     lastMusicChannel=currentChannel;
     document.querySelectorAll('#channelGrid .ch-btn.active').forEach(b=>b.classList.remove('active'));
     this.classList.add('active');
+    _urlFromCode=true;history.pushState({channel:'chill'},'','/arzemju/chill');
     showStatic(()=>{startGame()});
   }
 });
@@ -3295,6 +3367,10 @@ function startGame(){
   const hi=document.getElementById('swHiscore');if(hi)hi.textContent=gameHiscore;
   // Audio — lofi YouTube fonā
   startGameAudio();
+  // CHILL — VHS filtrs (kā Vecie, tikai uz CHILL overlay)
+  const _ts=document.getElementById('tvScreen');
+  _ts.classList.remove('ch-style-clean','ch-style-lomo');
+  if(!_ts.classList.contains('ch-style-vhs'))_ts.classList.add('ch-style-vhs');
   // SPĒLE poga active
   const gb=document.getElementById('gamePanelBtn');if(gb)gb.classList.add('active');
   // Grid ātrums — CSS custom property
