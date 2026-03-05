@@ -405,7 +405,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
 .tv-live-strip{position:absolute;top:6px;right:16px;z-index:15;display:flex;align-items:center;gap:8px;pointer-events:auto;
   animation:vhsRgbText 2.5s steps(9) infinite alternate}
 .tv-live-badge{display:flex;align-items:center;gap:5px;font-family:'Press Start 2P',monospace;font-size:clamp(8px,1.1vw,13px);color:#fff;
-  background:rgba(0,0,0,0.55);padding:5px 10px;border-radius:4px;letter-spacing:1px;white-space:nowrap}
+  background:none;padding:5px 10px;border-radius:4px;letter-spacing:1px;white-space:nowrap}
 .tv-live-dot{width:8px;height:8px;border-radius:50%;background:#e53935;display:inline-block;animation:livePulse 1.5s ease-in-out infinite;margin-right:2px;flex-shrink:0}
 @keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 4px #e53935}50%{opacity:.4;box-shadow:0 0 10px #ff5252,0 0 18px #e53935}}
 .tv-live-count{color:rgba(255,255,255,0.8);margin-left:3px}
@@ -2489,19 +2489,14 @@ function switchChannel(ch){
   if(ch<0||ch>=channels.length)return;
   hideColorBars();clearWatchdog();skipChain=0; // Reset error state
   resetOverlayPhases(); // Notīra TAGAD SKAN / TIKKO SKANĒJA overlay + taimerus (lai nepaliek no iepriekšējā kanāla)
-  // Ja iepriekšējais bija spēle — apstādināt
-  if(isGameChannel(currentChannel)){stopGame()}
+  // Ja spēle darbojās — apstādināt
+  if(gameRunning){stopGame();const gb=document.getElementById('gamePanelBtn');if(gb)gb.classList.remove('active')}
   currentChannel=ch;
-  if(!isGameChannel(ch))lastMusicChannel=ch; // Atceries pēdējo mūzikas kanālu
+  lastMusicChannel=ch; // Atceries pēdējo mūzikas kanālu
   document.querySelectorAll('#channelGrid .ch-btn').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.ch)===ch));
   const ov=document.getElementById('chOverlay');ov.textContent='KAN '+(ch+1);ov.classList.add('show');setTimeout(()=>ov.classList.remove('show'),1500);
   // VHS OSD — atjaunināt kanāla nosaukumu
   const osdCh=document.getElementById('vhsOsdCh');if(osdCh)osdCh.textContent='▶ '+channels[ch].name;
-  if(isGameChannel(ch)){
-    // Spēles kanāls — YouTube NEpauzē (lofi skanēs caur to)
-    showStatic(()=>{startGame()});
-    return;
-  }
   // Parastais YouTube kanāls
   const live=getLivePosition(ch);
   currentVideoIdx[ch]=live.videoIdx;
@@ -2511,15 +2506,11 @@ function switchChannel(ch){
   });
 }
 function changeChannel(dir){
-  // Izlaižam game/CHILL kanālus — tikai mūzikas kanāli riņķī
-  let n=currentChannel;
+  let n=currentChannel+dir;
   const total=channels.length;
-  for(let i=0;i<total;i++){
-    n+=dir;
-    if(n<0)n=total-1;
-    if(n>=total)n=0;
-    if(!isGameChannel(n)){switchChannel(n);return}
-  }
+  if(n<0)n=total-1;
+  if(n>=total)n=0;
+  switchChannel(n);
 }
 // Color Bars — parādās kad video nav pieejams (error/broken)
 function showColorBars(msg){
@@ -2556,10 +2547,10 @@ function togglePower(){
     if(vhsOsd)vhsOsd.style.display='';
     const ledMq=document.getElementById('ledMarqueeWrap');if(ledMq)ledMq.classList.add('on');
     setChatEnabled(true);
-    // Ja bija uz spēles vai tikko ienāca — random mūzikas kanāls (ne spēle)
-    if(isGameChannel(currentChannel)||!lastMusicChannel){
-      const musicChannels=channels.map((_,i)=>i).filter(i=>!isGameChannel(i));
-      const rndCh=musicChannels[Math.floor(Math.random()*musicChannels.length)]||0;
+    // Ja bija uz spēles vai tikko ienāca — random mūzikas kanāls
+    if(gameRunning||!lastMusicChannel){
+      if(gameRunning)stopGame();
+      const rndCh=Math.floor(Math.random()*channels.length)||0;
       switchChannel(rndCh);
     } else {
       // Atgriežas uz to pašu kanālu kur bija
@@ -2575,19 +2566,19 @@ document.getElementById('powerToggleInput').addEventListener('change',function()
   if(!this.checked){this.checked=true;return}
   switchLangGroup(this.checked ? 'arzemju' : 'latviesu');
 });
-// SPĒLE poga — atsevišķā panelī augšā
+// CHILL poga — toggle spēli/lofi tieši
 document.getElementById('gamePanelBtn').addEventListener('click',function(){
   if(!isPoweredOn)return;
-  // Atrast spēles kanāla indeksu
-  const gameIdx=channels.findIndex((_,i)=>isGameChannel(i));
-  if(gameIdx<0)return;
-  if(currentChannel===gameIdx){
-    // Ja jau uz spēles — atgriežamies uz pēdējo mūzikas kanālu
-    switchChannel(lastMusicChannel||0);
+  if(gameRunning){
+    // Izslēgt spēli — atgriezties uz mūziku
+    stopGame();
     this.classList.remove('active');
+    switchChannel(lastMusicChannel||0);
   }else{
-    switchChannel(gameIdx);
+    // Ieslēgt spēli
+    lastMusicChannel=currentChannel;
     this.classList.add('active');
+    showStatic(()=>{startGame()});
   }
 });
 function toggleMute(){
