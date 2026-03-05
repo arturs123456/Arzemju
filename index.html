@@ -2434,12 +2434,13 @@ function parseVideoMeta(v){
 let ovTimers=[];
 let ovPhasesDone={now1:false,mid:false,now2:false,next:false,just:false,xfade:false};
 var overlayBusyUntil=0; // Date.now() kad pēdējais overlay būs beidzies
+var channelEnteredAt=0; // Laiks kad kanāls tika ieslēgts — 30s grace period pirms overlay
 const OV_MIN_GAP=5000; // 5s minimālā pauze starp overlay
 const OV_MIN_DUR=5; // 5s minimālais rādīšanas laiks
 function resetOverlayPhases(){
   ovPhasesDone={now1:false,mid:false,now2:false,next:false,just:false,xfade:false};
   ovTimers.forEach(t=>clearTimeout(t));ovTimers=[];
-  overlayBusyUntil=0;
+  overlayBusyUntil=0;channelEnteredAt=Date.now();
   hideOverlay();hideMidOverlay();resetAgeBadge();
   const dim=document.getElementById('tvDimOverlay');if(dim)dim.classList.remove('dimming');
 }
@@ -2531,17 +2532,21 @@ function startProgressTracker(){
       // ═══ OVERLAY SECĪBA — 6 fāzes ar kolīziju aizsardzību ═══
       // TAGAD SKAN(30s) → MID(vidū) → TAGAD SKAN#2(90s pirms) → NĀKAMAIS(60s pirms) → TIKKO SKANĒJA(30s pirms) → crossfade(21s pirms)
       const totalDur=effectiveEnd-(v.trimStart||6);
+      // Grace period — 30s pēc kanāla ieslēgšanas/pārslēgšanas neradīt info overlays
+      // (lai nesajūt ka "uzreiz parāda kas skan" bet gan kā īsts TV)
+      const sinceEntry=(Date.now()-channelEnteredAt)/1000;
+      const graceOk=sinceEntry>=30;
       // 1) TAGAD SKAN #1 — ~40s pēc klipa sākuma (+10s)
-      if(c>=40&&!ovPhasesDone.now1){ovPhasesDone.now1=true;safeShowOverlay('now',v,10)}
+      if(c>=40&&!ovPhasesDone.now1){if(graceOk){ovPhasesDone.now1=true;safeShowOverlay('now',v,10)}else{ovPhasesDone.now1=true}}
       // 2) MID-SONG PROGRAM — viduspunktā (tikai ja dziesma > 60s)
       const midPoint=effectiveEnd/2;
-      if(totalDur>60&&c>=midPoint&&c<midPoint+15&&!ovPhasesDone.mid){ovPhasesDone.mid=true;safeMidOverlay(10)}
+      if(totalDur>60&&c>=midPoint&&c<midPoint+15&&!ovPhasesDone.mid){if(graceOk){ovPhasesDone.mid=true;safeMidOverlay(10)}else{ovPhasesDone.mid=true}}
       // 3) TAGAD SKAN #2 — ~80s pirms beigām (tikai ja dziesma > 120s, +10s)
-      if(totalDur>120&&remaining<=80&&remaining>65&&!ovPhasesDone.now2){ovPhasesDone.now2=true;safeShowOverlay('now',v,10)}
+      if(totalDur>120&&remaining<=80&&remaining>65&&!ovPhasesDone.now2){if(graceOk){ovPhasesDone.now2=true;safeShowOverlay('now',v,10)}else{ovPhasesDone.now2=true}}
       // 4) NĀKAMAIS — ~60s pirms beigām + preload
-      if(remaining<=60&&remaining>45&&!ovPhasesDone.next){ovPhasesDone.next=true;safeShowOverlay('next',getNextVideoInfo(),10);preloadNext()}
+      if(remaining<=60&&remaining>45&&!ovPhasesDone.next){if(graceOk){ovPhasesDone.next=true;safeShowOverlay('next',getNextVideoInfo(),10)}else{ovPhasesDone.next=true};preloadNext()}
       // 5) TIKKO SKANĒJA — ~30s pirms beigām (pašreizējā dziesma, +10s, pirms crossfade@21s)
-      if(remaining<=30&&remaining>20&&!ovPhasesDone.just){ovPhasesDone.just=true;safeShowOverlay('just',v,10)}
+      if(remaining<=30&&remaining>20&&!ovPhasesDone.just){if(graceOk){ovPhasesDone.just=true;safeShowOverlay('just',v,10)}else{ovPhasesDone.just=true}}
       // ═══ CROSSFADE MEHĀNIKA: 26s → 21s → 12s ═══
       // 26s pirms beigām: Ekrāns sāk aptumšoties + volume lēnām samazinās
       if(remaining<=26&&remaining>21&&!crossfading&&!isMuted){
