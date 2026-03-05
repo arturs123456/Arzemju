@@ -2603,7 +2603,37 @@ function togglePower(){
     }
   }
 }
-document.getElementById('powerToggleInput').addEventListener('click',function(e){e.preventDefault()});
+// ENG/LAT toggle — LAT izslēdz (CRT off), ENG ieslēdz atpakaļ
+document.getElementById('powerToggleInput').addEventListener('change',function(){
+  // checked=true → ENG (ieslēgts), checked=false → LAT (izslēgts)
+  if(!this.checked){
+    // Pārslēdz uz LAT → izslēdzam TV
+    isPoweredOn=false;
+    const off=document.getElementById('powerOff'),led=document.getElementById('ledPower'),bars=document.querySelectorAll('.indicator-bar');
+    const vhsOsd=document.getElementById('vhsOsd');
+    led.classList.add('off');
+    try{if(playerAReady)playerA.pauseVideo()}catch(e){}
+    try{if(playerBReady)playerB.pauseVideo()}catch(e){}
+    off.classList.add('show');const d=off.querySelector('.power-dot');d.style.animation='none';d.offsetHeight;d.style.animation='';
+    bars.forEach((b,i)=>{if(i<3)b.classList.add('active');else b.classList.remove('active')});
+    if(vhsOsd)vhsOsd.style.display='none';
+    const ledMq=document.getElementById('ledMarqueeWrap');if(ledMq)ledMq.classList.remove('on');
+    setChatEnabled(false);
+  } else {
+    // Pārslēdz uz ENG → ieslēdzam TV atpakaļ
+    isPoweredOn=true;
+    const off=document.getElementById('powerOff'),led=document.getElementById('ledPower'),bars=document.querySelectorAll('.indicator-bar');
+    const vhsOsd=document.getElementById('vhsOsd');
+    led.classList.remove('off');off.classList.remove('show');bars.forEach(b=>b.classList.add('active'));
+    if(vhsOsd)vhsOsd.style.display='';
+    const ledMq=document.getElementById('ledMarqueeWrap');if(ledMq)ledMq.classList.add('on');
+    setChatEnabled(true);
+    showStatic(()=>{
+      const ap=activeSlot==='a'?playerA:playerB;
+      if(playerReady&&ap)ap.playVideo();
+    });
+  }
+});
 // CHILL poga — toggle spēli/lofi tieši
 document.getElementById('gamePanelBtn').addEventListener('click',function(){
   if(!isPoweredOn)return;
