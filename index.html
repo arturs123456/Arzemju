@@ -15,6 +15,8 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%230a0a0a'/><text x='256' y='200' font-family='sans-serif' font-size='120' font-weight='900' fill='%239b4dff' text-anchor='middle'>LOM</text><text x='256' y='350' font-family='sans-serif' font-size='140' font-weight='900' fill='%2335ed7e' text-anchor='middle'>TV</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&family=Bowlby+One+SC&family=Russo+One&family=Caveat:wght@400;500;600;700&family=Sigmar+One&family=Gveret+Levin&family=Handjet:wght@400;500;700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <!-- Firebase Realtime Database -->
 <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -1822,11 +1824,31 @@ var gameChatLastKey=null;
 var BAD_WORDS=[];
 try{var bw=localStorage.getItem('lom_badwords');if(bw)BAD_WORDS=JSON.parse(bw)}catch(e){}
 
-// ===== GOOGLE SHEETS CMS =====
-// Tabulas formāts: YouTube ID | Izpildītājs | Dziesma | Albums | Gads | Garums (sek) | Era | Trim Start | Trim End | POP | ROKS | ŠLĀGERI | RETRO | ĀRZEMJU | 2020+ | HIPHOP | KONKURSI | LIVE | BĒRNI
-// Publicē tabulu: File → Share → Publish to web → Sheet1 → CSV
-// Ielīmē URL zemāk:
-const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT22_gZFH84iXiOMqKCi_ozUAlvU7ovMAH6rvZfwjEV8Dwqkn4lhzZsL4zMwyLGbZe7hS8Mgdw82C3E/pub?gid=0&single=true&output=csv';
+// ===== SUPABASE CMS =====
+const SUPABASE_URL = 'https://swamlervnowkokqmnwgl.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3YW1sZXJ2bm93a29rcW1ud2dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjE1NDksImV4cCI6MjA4ODE5NzU0OX0.NaBULm_Z77mq2-vkqugNblaKneCS2gx0cLNGH_vL18k';
+const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Genre → kanāla mapping (Supabase genre1 → LOM kanāla key)
+const GENRE_CHANNEL_MAP = {
+  'pop':'POP','art pop':'POP','dance pop':'POP','country pop':'POP',
+  'latin pop':'POP','indie pop':'POP','reggae pop':'POP','pop rock':'POP',
+  'dream pop':'POP','new wave':'POP','r&b':'POP','country':'POP',
+  'rock':'ROKS','art rock':'ROKS','indie rock':'ROKS','alternative rock':'ROKS',
+  'post-punk':'ROKS','punk':'ROKS','hardcore punk':'ROKS','gothic rock':'ROKS',
+  'grunge':'ROKS','shoegaze':'ROKS','krautrock':'ROKS','noise rock':'ROKS',
+  'post-rock':'ROKS','psychedelic rock':'ROKS','folk rock':'ROKS',
+  'post-hardcore':'ROKS','slowcore':'ROKS',
+  'hip hop':'RAP','alternative hip-hop':'RAP','spoken word':'RAP',
+  'jazz':'JAZZ','acid jazz':'JAZZ','jazz fusion':'JAZZ','free jazz':'JAZZ',
+  'neo-soul':'JAZZ','soul':'JAZZ','trip-hop':'JAZZ','folk':'JAZZ',
+  'ambient':'JAZZ','lo-fi':'JAZZ',
+  'dance':'DANCE','electronic':'DANCE','disco':'DANCE','funk':'DANCE',
+  'reggae':'DANCE','ska':'DANCE'
+};
+
+// (Legacy) Google Sheets URL — vairs netiek izmantots
+const SHEETS_CSV_URL = '';
 
 // Kanālu konfigurācija (secība, nosaukumi, krāsas)
 // csvPrefix — kolonnas nosaukuma sākums, pēc kura meklē CSV headerī
@@ -1992,6 +2014,71 @@ function sheetsToChannels(rows){
   }).filter(ch=>ch.videos.length>0||ch._isGame);
 }
 
+// ═══ SUPABASE → CHANNELS ═══
+function supabaseToChannels(songs){
+  const channelMap={};
+  CHANNEL_CONFIG.forEach(cfg=>{channelMap[cfg.key]={name:cfg.name,label:cfg.label,color:cfg.color,videos:[]}});
+  songs.forEach(song=>{
+    const year=song.year||0;
+    const era=year>0?(year<=1989?'vintage':year<=2000?'vcr':'modern'):'modern';
+    const video={
+      id:song.youtube_id,
+      title:(song.artist||'')+' — '+(song.title||''),
+      artist:song.artist||'',
+      song:song.title||'',
+      album:song.album||'',
+      year:year,
+      decade:era,
+      duration:song.duration_sec||240,
+      trimStart:song.trim_start??5,
+      trimEnd:song.trim_end??10
+    };
+    const addedTo=new Set();
+    const genre=(song.genre1||'').toLowerCase().trim();
+    // 1) Genre → kanāls
+    const chKey=GENRE_CHANNEL_MAP[genre];
+    if(chKey&&channelMap[chKey]){channelMap[chKey].videos.push(video);addedTo.add(chKey)}
+    // 2) Visas dziesmas → ĀRZ kanāls
+    if(channelMap['ĀRZ']){channelMap['ĀRZ'].videos.push(video);addedTo.add('ĀRZ')}
+    // 3) Automātiski pēc gada
+    if(year>0){
+      if(year<=1990&&channelMap['RETRO']){channelMap['RETRO'].videos.push(video)}
+      if(year>=1991&&year<=2021&&channelMap['ATMODA']){channelMap['ATMODA'].videos.push(video)}
+      if(year>=2022&&channelMap['JAUNUMI']){channelMap['JAUNUMI'].videos.push(video)}
+    }
+  });
+  return CHANNEL_CONFIG.map(cfg=>{
+    const ch=channelMap[cfg.key];
+    if(cfg.type==='game'){ch._isGame=true;ch.videos=[{id:'_game_',title:'Synthwave Racer',artist:'LOM',song:'Game',duration:9999}]}
+    return ch;
+  }).filter(ch=>ch.videos.length>0||ch._isGame);
+}
+
+async function loadFromSupabase(){
+  try{
+    let allSongs=[];
+    let from=0;
+    const PAGE=1000;
+    while(true){
+      const{data,error}=await _sb
+        .from('songs')
+        .select('artist,title,year,genre1,youtube_id,album,duration_sec,trim_start,trim_end')
+        .not('youtube_id','is',null)
+        .neq('youtube_id','')
+        .order('artist')
+        .range(from,from+PAGE-1);
+      if(error){console.error('Supabase error:',error);break}
+      allSongs=allSongs.concat(data||[]);
+      if(!data||data.length<PAGE)break;
+      from+=PAGE;
+    }
+    if(allSongs.length===0)return false;
+    const parsed=supabaseToChannels(allSongs);
+    if(parsed.length>0){channels=parsed;cmsLoaded=true;console.log('CMS: Ielādētas',allSongs.length,'dziesmas no Supabase');return true}
+    return false;
+  }catch(e){console.warn('Supabase nav pieejams, izmanto fallback',e);return false}
+}
+
 // Ielādē datus no Google Sheets vai izmanto fallback
 let channels=FALLBACK_CHANNELS;
 let cmsLoaded=false;
@@ -2122,7 +2209,7 @@ function startTV(){
   },600);
 }
 // Ielādē CMS datus sākuma ekrāna laikā, tad startē TV
-loadFromSheets().then(loaded=>{
+loadFromSupabase().then(loaded=>{
   if(loaded){
     syncAllChannels();
     buildChannelGrid();
