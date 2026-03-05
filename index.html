@@ -1574,7 +1574,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
         </div>
         <!-- LIVE viewers + report — labajā augšējā stūrī -->
         <div class="tv-live-strip" id="tvLiveStrip">
-          <div class="tv-live-badge"><span class="tv-live-dot"></span>LIVE <span class="tv-live-count" id="tvLiveCount">147</span></div>
+          <div class="tv-live-badge"><span class="tv-live-dot"></span>LIVE <span class="tv-live-count" id="tvLiveCount">---</span></div>
           <div class="tv-reactions" style="position:relative">
             <button class="tv-react-btn tv-react-report" id="reactReport" title="Ziņot par dziesmu">&#9888;</button>
             <div class="tv-report-popup" id="reportPopup">
@@ -2772,21 +2772,33 @@ function cleanupOldMessages(){
 }
 
 // ═══ LIVE VIEWERS COUNTER ═══
-// Simulē skatītāju skaitu: dienas laikā augstāk (~160-200), naktī zemāk (~100-130)
-function getLiveViewerBase(){
-  const h=new Date().getHours();
-  // Diena (10-22): augstāks, nakts (23-9): zemāks
-  if(h>=10&&h<14)return 165; // Pusdienlaiks
-  if(h>=14&&h<18)return 145; // Pēcpusdiena
-  if(h>=18&&h<22)return 185; // Pīķis vakarā
-  if(h>=22||h<2)return 130;  // Vēls vakars
-  return 108; // Nakts
+// Diapazons 102–998, atkarīgs no nedēļas dienas un stundas
+function getLiveViewerRange(){
+  const now=new Date(),h=now.getHours(),dow=now.getDay(); // 0=Sv,1=P,2=O,3=T,4=C,5=Pk,6=Se
+  // Piektdiena — nekad zem 502
+  if(dow===5)return[502,998];
+  // Sestdiena un Svētdiena
+  if(dow===0||dow===6){
+    if(h>=3&&h<7)return[202,502]; // nakts 03–07: zemāk, bet ne zem 202
+    return[498,998];
+  }
+  // Darba dienas (P–C)
+  if(h>=2&&h<8)return[102,198];   // nakts 02–08
+  if(h>=8&&h<17)return[198,498];  // diena 08–17
+  return[498,998];                // vakars+nakts 17–02
 }
+let _lvBase=0;
 function updateLiveCount(){
   const el=document.getElementById('tvLiveCount');if(!el)return;
-  const base=getLiveViewerBase();
-  const jitter=Math.floor(Math.random()*21)-10; // ±10
-  el.textContent=Math.max(80,base+jitter);
+  const[min,max]=getLiveViewerRange();
+  // Ja bāze ārpus diapazona — pārlec uz jauno diapazonu
+  if(_lvBase<min||_lvBase>max)_lvBase=min+Math.floor(Math.random()*(max-min+1));
+  // Pakāpeniska novirze ±5–10% no diapazona (smooth drift)
+  const drift=Math.floor((Math.random()-0.5)*0.1*(max-min));
+  _lvBase=Math.max(min,Math.min(max,_lvBase+drift));
+  // Maza svārstība ±8
+  const jitter=Math.floor(Math.random()*17)-8;
+  el.textContent=Math.max(min,Math.min(max,_lvBase+jitter));
 }
 updateLiveCount();
 setInterval(updateLiveCount,7000+Math.random()*6000); // Ik 7-13 sek
