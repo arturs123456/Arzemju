@@ -306,7 +306,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%)}
 
 /* SCREEN OVERLAYS */
-@keyframes logoPulse{0%,100%{text-shadow:0 0 8px var(--neon-purple),0 0 16px rgba(155,77,255,0.4)}50%{text-shadow:0 0 14px var(--neon-purple),0 0 28px rgba(155,77,255,0.7)}}
+@keyframes logoPulse{0%,100%{text-shadow:0 0 8px var(--neon-green),0 0 16px rgba(0,255,65,0.4)}50%{text-shadow:0 0 14px var(--neon-green),0 0 28px rgba(0,255,65,0.7)}}
 .screen-logo{position:absolute;top:8px;left:8px;z-index:10;display:flex;align-items:center;gap:3px;background:none;border:none;padding:12px 22px 12px 16px;border-radius:0;
   animation:logoFloat 3s ease-in-out infinite}
 /* TV Logo Glitch — retro TV traucējums */
@@ -342,10 +342,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   text-shadow:0 0 7px #00f0ff,0 0 15px #00f0ff,0 0 30px rgba(0,115,255,0.5)}
 /* ═══ JAFFA.tv logo — ekrāna augšā pa kreisi ═══ */
 .screen-logo-jaffa{font-family:'Lilita One','Bowlby One SC',cursive;font-size:30px;font-weight:400;letter-spacing:2px;line-height:1;
-  color:var(--neon-purple);text-shadow:-0.7px -0.7px 0 #000,0.7px -0.7px 0 #000,-0.7px 0.7px 0 #000,0.7px 0.7px 0 #000,0 0 8px var(--neon-purple),0 0 18px rgba(155,77,255,0.3);
-  animation:vhsRgbText 2s steps(9) infinite alternate,logoGlitch 8s infinite}
-.screen-logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:19px;font-weight:400;color:#d9fdff;letter-spacing:1px;
-  text-shadow:0 0 7px #00f0ff,0 0 15px #00f0ff;transform:rotate(-8deg);display:inline-block;margin-left:1px;position:relative;top:0px}
+  color:var(--neon-green);text-shadow:-0.5px -0.5px 0 #000,0.5px -0.5px 0 #000,-0.5px 0.5px 0 #000,0.5px 0.5px 0 #000,0 0 10px var(--neon-green),0 0 25px rgba(0,255,65,0.3);
+  display:inline-block;position:relative}
+.screen-logo-dot-tv{font-family:'Gveret Levin',cursive;font-size:16px;font-weight:400;color:#d9fdff;letter-spacing:1px;
+  text-shadow:0 0 7px #00f0ff,0 0 15px #00f0ff;transform:rotate(-10deg);display:inline-block;
+  position:absolute;top:-2px;right:-28px}
 .ch-switch-overlay{position:absolute;top:13px;right:14px;z-index:15;font-family:'Press Start 2P',monospace;font-size:20px;font-weight:400;color:#fff;
   text-shadow:0 0 10px rgba(255,255,255,0.5);opacity:0;transition:opacity .15s;background:rgba(0,0,0,0.65);padding:6px 16px;border:none;border-radius:4px;letter-spacing:2px;
   animation:vhsRgbText 1.5s steps(9) infinite alternate}
@@ -1145,8 +1146,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   /* Logo uz ekrāna */
   .screen-logo{top:4px;left:6px;padding:2px 6px;gap:1px}
   .screen-logo-jaffa{font-size:16px}
-  .screen-logo-dot-tv{font-size:10px}
-  .screen-logo-jaffa{text-shadow:-0.5px -0.5px 0 #000,0.5px -0.5px 0 #000,-0.5px 0.5px 0 #000,0.5px 0.5px 0 #000,0 0 6px var(--neon-purple)}
+  .screen-logo-dot-tv{font-size:9px;top:-1px;right:-16px}
+  .screen-logo-jaffa{text-shadow:-0.5px -0.5px 0 #000,0.5px -0.5px 0 #000,-0.5px 0.5px 0 #000,0.5px 0.5px 0 #000,0 0 6px var(--neon-green)}
   /* Indicator bars kompaktāki */
   .indicator-bars{padding-right:4px}
   .indicator-bar{width:3px;height:12px}
@@ -1180,8 +1181,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
   .panel-bottom-zone{padding:2px 0}
   /* Logo */
   .screen-logo{top:2px;left:4px;padding:2px 4px;gap:0}
-  .screen-logo-jaffa{font-size:12px;text-shadow:-0.4px -0.4px 0 #000,0.4px -0.4px 0 #000,-0.4px 0.4px 0 #000,0.4px 0.4px 0 #000,0 0 4px var(--neon-purple)}
-  .screen-logo-dot-tv{font-size:8px}
+  .screen-logo-jaffa{font-size:12px;text-shadow:-0.4px -0.4px 0 #000,0.4px -0.4px 0 #000,-0.4px 0.4px 0 #000,0.4px 0.4px 0 #000,0 0 4px var(--neon-green)}
+  .screen-logo-dot-tv{font-size:7px;top:-1px;right:-12px}
 }
 
 /* "PAGRIEZ TELEFONU" OVERLAY — tikai portrait mobilajā */
@@ -1588,7 +1589,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:var(--font-main);ba
         <div class="era-overlay-vcr-band"></div>
         <div class="era-overlay-vcr-grain"></div>
         <div class="era-overlay-vcr-glitch"></div>
-        <div class="screen-logo"><span class="screen-logo-jaffa">JAFFA</span><span class="screen-logo-dot-tv">.tv</span></div>
+        <div class="screen-logo"><span class="screen-logo-jaffa">JAFFA<span class="screen-logo-dot-tv">.tv</span></span></div>
         <button class="fs-exit-btn" id="fsExitBtn" onclick="toggleFullscreen()" title="Iziet no pilnekrāna">✕</button>
         <div class="ch-switch-overlay" id="chOverlay"></div>
         <div class="now-playing" id="nowPlaying">
